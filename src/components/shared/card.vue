@@ -1,0 +1,209 @@
+<template>
+  <div class="container-cards overflow-hidden">
+    <span class="prev">&lt;</span>
+    <div class="card" v-for="(dados, index) in JSON.parse(dados_salvos)" :key="index">
+      <div class="card-img">
+        <img src="/images/nu.png">
+      </div>
+      <div class="card-desc">
+        <p class="titulo">{{ dados.titulo }}</p>
+        <p class="valor">valor</p>
+        <div class="div-preco-img">
+          <img src="/images/cartoes-com-cifrao.png" alt="icone valor">
+          <p class="preco"> {{ dados.valor }}</p>
+        </div>
+      </div>
+    </div>
+    <span class="next">&gt;</span>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "card",
+  // props: ['dados_salvos'],
+  data() {
+    return {
+      dados_salvos: localStorage.getItem("dados")
+    };
+  },
+  methods: {
+    btnAvancaVolta() {
+      const carousel = document.querySelector(".container-cards");
+      const prevBtn = document.querySelector(".prev");
+      const nextBtn = document.querySelector(".next");
+
+      let scrollPosition = 0;
+      let isDown = false;
+      let startX;
+      let scrollLeft;
+
+      carousel.addEventListener("mousedown", e => {
+        isDown = true;
+        startX = e.pageX - carousel.offsetLeft;
+        scrollLeft = carousel.scrollLeft;
+      });
+      window.addEventListener("mouseleave", () => {
+        isDown = false;
+      });
+      carousel.addEventListener("mouseup", () => {
+        isDown = false;
+      });
+      carousel.addEventListener("mousemove", e => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - carousel.offsetLeft;
+        const walk = x - startX;
+        carousel.scrollLeft = scrollLeft - walk;
+      });
+
+      prevBtn.addEventListener("click", () => {
+        scrollPosition -= 300; // Defina a quantidade de pixels que deseja mover o carrossel
+        carousel.scrollTo({
+          top: 0,
+          left: scrollPosition,
+          behavior: "smooth"
+        });
+      });
+
+      nextBtn.addEventListener("click", () => {
+        scrollPosition += 300; // Defina a quantidade de pixels que deseja mover o carrossel
+        carousel.scrollTo({
+          top: 0,
+          left: scrollPosition,
+          behavior: "smooth"
+        });
+      });
+    }
+
+  },
+  mounted() {
+    this.btnAvancaVolta();
+    this.dados_salvos = localStorage.getItem("dados");
+  }
+};
+</script>
+
+<style scoped>
+.container-cards {
+  width: 100%;
+  height: 300px;
+  white-space: nowrap;
+  overflow-x: hidden;
+  display: flex;
+  -webkit-overflow-scrolling: touch;
+}
+
+span.prev {
+  background: var(--COLOR-BASE-SEGUNDARIA);
+  border-radius: 25px;
+  color: var(--COLOR-BASE-TEXTO);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bolder;
+  cursor: pointer;
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  margin-top: 120px;
+  margin-left: -30px;
+}
+
+span.next {
+  background: var(--COLOR-BASE-SEGUNDARIA);
+  border-radius: 25px;
+  color: var(--COLOR-BASE-TEXTO);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bolder;
+  cursor: pointer;
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  margin-top: 120px;
+  margin-left: 456px !important;
+}
+
+span.next:checked, span.prev:checked {
+  background: #424242 !important;
+}
+
+.carousel .card {
+  display: inline-block;
+  width: 200px;
+  height: 250px;
+  margin-right: 20px;
+}
+
+.card {
+  margin-left: 20px;
+  position: relative;
+  width: 126.75px;
+  min-width: 126.75px;
+  height: 156px;
+  top: 70px;
+
+  background: #D7D7D7;
+  border-radius: 9px;
+}
+
+.card:nth-child(1) {
+  margin-left: 15px;
+}
+
+.card-img img {
+  width: 100%;
+  height: 86px;
+  object-fit: cover;
+  padding: 0px;
+  transition: .5s linear;
+}
+
+.card-img img:hover {
+  transition: .5s linear;
+  transform: rotate(45deg);
+}
+
+.card-desc {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-desc p {
+  margin: 2px;
+}
+
+.card-desc .titulo {
+  font-size: 9px;
+  line-height: 9px;
+  color: var(--COLOR-BASE-SEGUNDARIA);
+}
+
+.card-desc .valor {
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 12px;
+  color: var(--COLOR-BASE-PRIMARIA);
+}
+
+.div-preco-img {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.div-preco-img img {
+  height: 12.75px;
+}
+
+.div-preco-img .preco {
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 21px;
+  color: var(--COLOR-BASE-SEGUNDARIA);
+}
+</style>

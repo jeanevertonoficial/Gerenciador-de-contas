@@ -1,0 +1,40 @@
+<template>
+  <div class="container-header">
+    <header-dashboard  :titulo_centro="titulo_central"/>
+  </div>
+  <div class="container-main">
+    <box-base :titulo_cartao="titulo_cartao" :titulo_boleto="titulo_boleto"/>
+    <formulario-de-registro/>
+  </div>
+</template>
+
+<script>
+import HeaderDashboard from "@/components/shared/headerDashboard.vue";
+import BoxBase from "@/components/shared/box-base.vue";
+import FormularioDeRegistro from "@/components/shared/formulario-de-registro.vue";
+
+export default {
+  name: "DashboardGerencial",
+  components: { FormularioDeRegistro, BoxBase, HeaderDashboard },
+  data () {
+    return {
+      titulo_central: "VIVA SEMPRE ORGANIZADO",
+      titulo_cartao: "CARTÕES DE CRÉDITOS/DÉBITOS",
+      titulo_boleto: "BOLETOS BANCÁRIOS"
+    }
+  }
+};
+</script>
+
+<style>
+.container-header {
+  width: 100%;
+  height: 61px;
+  background: var(--COLOR-BASE-PRIMARIA);
+  color: var(--COLOR-BASE-TEXTO);
+  position: fixed;
+}
+.container-main {
+  width: 100%;
+}
+</style>

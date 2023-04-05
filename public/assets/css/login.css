@@ -1,0 +1,103 @@
+html, body {
+    padding: 0px;
+    margin: 0px;
+    font-family: roboto, arial, helvetica, sans-serif;
+    background: var(--BG-COLOR-HTML);
+}
+.container {
+    width: 100vw;
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+.header-login {
+    position: absolute;
+}
+.container-login {
+    position: absolute;
+    width: 500px;
+    max-width: 500px;
+    height: 100%;
+    display: flex;
+    background: var(--COLOR-BASE-SEGUNDARIA);
+    box-shadow: 0px 3.45013px 3.45013px rgba(0, 0, 0, 0.25);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.container-login h1 {
+    color: white;
+    margin-bottom: -50px;
+    text-transform: uppercase;
+}
+.conteudo-login {
+    margin-top: -270px;
+    height: 45%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.by-descricao {
+    color: #FFFFFF;
+    font-size: 10px;
+}
+.container-corpo {
+    position: absolute;
+    background: url('/images/fundo.png');
+    width: 100%;
+    height: 100%;
+}
+.campos-inputs, .botoes-login  {
+    display: flex;
+    flex-direction: column;
+}
+.campos-inputs label {
+    margin-bottom: 15px;
+    font-weight: 700;
+    color: white;
+}
+.campos-inputs input {
+    align-items: flex-end !important;
+    font-weight: initial !important;
+    font-size: initial !important;
+}
+.botoes-login {
+    margin-top: 20px;
+}
+.botoes-login button:nth-child(1) {
+    margin-bottom: 15px;
+}
+
+.botoes-login button, .campos-inputs input {
+    padding: 7px;
+    color: #4616AC;
+    font-size: 10px;
+    font-weight: bolder;
+    border-radius: 2px;
+    border: none;
+    font-family: roboto, arial, helvetica, sans-serif;
+}
+.texto-info {
+    position: absolute;
+    width: 629px;
+    display: flex;
+    left: 265px;
+    top: 250px;
+    background: var(--COLOR-BASE-PRIMARIA);
+    border-radius: 10px;
+    align-content: center;
+    justify-content: center;
+}
+.texto-info p {
+    text-align: center;
+    padding: 15px;
+    color: #FFFFFF;
+    font-weight: bold
+}
+.texto-info p>strong {
+    font-size: 2rem;
+    color: var(--COLOR-BASE-SEGUNDARIA);
+}
