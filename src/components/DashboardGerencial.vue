@@ -25,16 +25,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.container-header {
-  width: 100%;
-  height: 61px;
-  background: var(--COLOR-BASE-PRIMARIA);
-  color: var(--COLOR-BASE-TEXTO);
-  position: fixed;
-}
-.container-main {
-  width: 100%;
-}
-</style>

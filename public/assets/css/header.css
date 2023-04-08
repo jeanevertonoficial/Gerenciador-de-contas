@@ -1,0 +1,38 @@
+
+header {
+    width: 70%;
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.header-titulo-centro {
+    font-weight: bolder;
+}
+
+.header-logar {
+    display: flex;
+    align-items: center;
+}
+
+.header-botao-logar {
+    font-size: small;
+    font-weight: 900;
+}
+
+.header-botao-logar {
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.header-botao-logar:hover {
+    color: #9A34FF;
+    transition: 0.5s;
+}
+.header-botao-logar a {
+    text-decoration: none;
+    color: inherit;
+}
