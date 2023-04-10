@@ -16,16 +16,17 @@
         <card/>
       </div>
     </div>
-
+    <FormularioDeRegistro/>
   </div>
 </template>
 
 <script>
 import Card from "@/components/shared/card.vue";
+import FormularioDeRegistro from "@/components/shared/formulario-de-registro.vue";
 
 export default {
   name: "box-base",
-  components: { Card },
+  components: { FormularioDeRegistro, Card },
   props: ["titulo_cartao", "titulo_boleto"]
 };
 </script>

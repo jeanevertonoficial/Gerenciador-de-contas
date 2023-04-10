@@ -4,7 +4,6 @@
   </div>
   <div class="container-main">
     <box-base :titulo_cartao="titulo_cartao" :titulo_boleto="titulo_boleto"/>
-    <formulario-de-registro/>
   </div>
 </template>
 
@@ -15,7 +14,7 @@ import FormularioDeRegistro from "@/components/shared/formulario-de-registro.vue
 
 export default {
   name: "DashboardGerencial",
-  components: { FormularioDeRegistro, BoxBase, HeaderDashboard },
+  components: { BoxBase, HeaderDashboard },
   data () {
     return {
       titulo_central: "VIVA SEMPRE ORGANIZADO",

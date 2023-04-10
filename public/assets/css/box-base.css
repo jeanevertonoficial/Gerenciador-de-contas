@@ -5,10 +5,11 @@
 }
 .box-base {
     position: absolute;
-    width: 534px;
+    width: 100%;
+    max-width: 534px;
     height: 255.75px;
     display: flex;
-    left: 143px;
+    /*left: 143px;*/
     top: 147px;
     background: var(--COLOR-BASE-TEXTO);
     border-radius: 18.75px;
@@ -20,7 +21,8 @@
 }
 .box-base-titulo {
     position: absolute;
-    width: 447.75px;
+    width: 100%;
+    max-width: 447.75px;
     height: 42px;
 
     background: #9A34FF;

@@ -54,7 +54,8 @@ span.next:checked, span.prev:checked {
 .card {
     margin-left: 20px;
     position: relative;
-    width: 126.75px;
+    width: 100%;
+    max-width:126.75px;
     min-width: 126.75px;
     height: 156px;
     top: 70px;
