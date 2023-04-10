@@ -1,7 +1,8 @@
 <template>
   <div class="container-cards overflow-hidden">
     <span class="prev">&lt;</span>
-    <div class="card" v-for="(dados, index) in JSON.parse(dados_salvos)" :key="index">
+    <div class="card" @click="abrirModal" v-for="(dados, index) in JSON.parse(dados_salvos)" :key="index">
+      <modal-open v-if="abrirMode === true" :valor="dados.valor" :titulo="dados.titulo" :abrir-mode="abrirMode" />
       <div class="card-img">
         <img src="/images/nu.png">
       </div>
@@ -19,15 +20,29 @@
 </template>
 
 <script>
+import modalOpen from "@/components/shared/modalOpen.vue";
+import ModalOpen from "@/components/shared/modalOpen.vue";
+
 export default {
   name: "card",
-  // props: ['dados_salvos'],
+  components: { ModalOpen },
+  computed: {
+    modalOpen() {
+      return {
+        modalOpen
+      };
+    }
+  },
   data() {
     return {
       dados_salvos: localStorage.getItem("dados"),
+      abrirMode: false
     };
   },
   methods: {
+    abrirModal() {
+      this.abrirMode = true;
+    },
     btnAvancaVolta() {
       const carousel = document.querySelector(".container-cards");
       const prevBtn = document.querySelector(".prev");

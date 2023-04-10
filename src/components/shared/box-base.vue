@@ -7,7 +7,9 @@
       </div>
       <card/>
     </div>
+
   </div>
+    {{ dados_salvos }}
     <div class="box-base boletos">
       <div class="box-base-titulo">
         <div class="titulo_base">
@@ -27,6 +29,9 @@ import FormularioDeRegistro from "@/components/shared/formulario-de-registro.vue
 export default {
   name: "box-base",
   components: { FormularioDeRegistro, Card },
-  props: ["titulo_cartao", "titulo_boleto"]
+  props: ["titulo_cartao", "titulo_boleto", 'dados_salvos'],
+  mounted() {
+    console.log(this.dados_salvos)
+  }
 };
 </script>

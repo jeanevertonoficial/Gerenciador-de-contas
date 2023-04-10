@@ -1,46 +1,30 @@
 <template>
   <div class="formulario-corpo">
     <div class="base-formulario">
-      <form method="post" @submit.prevent="salvar($event)">
+      <form @submit.prevent="salvar">
         <div class="check-tipo selecione">
           <h1> SELECIONE TIPO DE CADASTRO </h1>
           <div class="check-label">
             <label for="tipo-cartao" class="tipo-cartao">
               <img class="input-tipo-cartao" src="/images/cartoes-com-cifrao.png">
               Cartão
+              <input type="radio" v-model.trim="dados.tipo" value="cartao" id="tipo-cartao">
             </label>
             <label for="tipo-boleto" class="tipo-cartao">
               <img class="input-tipo-boleto" src="/images/fatura.png">
               Boleto
+              <input type="radio" v-model.trim="dados.tipo" value="boleto" id="tipo-boleto">
             </label>
           </div>
         </div>
         <div class="check-tipo titulo">
           <h1>TITULO DO CADASTRO</h1>
-          <input
-              type="text"
-              name="titulo"
-              v-model.trim="dados.titulo"
-              placeholder="DIGITE AQUI O TITULO">
+          <input type="text" v-model.trim="dados.titulo" placeholder="DIGITE AQUI O TITULO">
         </div>
         <div class="check-tipo valor">
           <h1>VALOR A PAGAR</h1>
-          <input
-              type="text"
-              v-model.trim="dados.valor"
-              name="valor"
-              placeholder="R$ DIGITE AQUI O VALOR A PAGAR">
+          <input type="text" v-model.trim="dados.valor" placeholder="R$ DIGITE AQUI O VALOR A PAGAR">
         </div>
-        <input type="radio"
-               v-model.trim="dados.tipo"
-               value="cartao"
-               name="tipo-cartao"
-               id="tipo-cartao">
-        <input type="radio"
-               v-model.trim="dados.tipo"
-               value="boleto"
-               name="tipo-boleto"
-               id="tipo-boleto">
         <button type="submit" class="btn-salvar">SALVAR</button>
       </form>
     </div>
@@ -48,7 +32,7 @@
       <p class="titulo-valor">valor total</p>
       <div class="preco-total">
         <img src="/images/total-dolar.png">
-        <span class="preco-total">{{ this.valor_total  }}</span>
+        <span class="preco-total">{{ valorTotal }}</span>
       </div>
     </div>
   </div>
@@ -62,31 +46,32 @@ export default {
       dados: {
         tipo: "",
         valor: "",
-        titulo: ""
+        titulo: "",
+        ordenar: "",
+        dataCriacao: ""
       },
-      valor_total: [],
-      dados_salvos: []
+      dadosSalvos: [],
+      valorTotal: 0
+    }
+  },
+  computed: {
+    formatoValor() {
+      return this.valorTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
     }
   },
   methods: {
     salvar() {
       const { titulo, valor, tipo } = this.dados
       const data = { titulo, valor, tipo }
-
-      this.dados_salvos.push(data)
-      localStorage.setItem("dados", JSON.stringify(this.dados_salvos))
+      this.dadosSalvos.push(data)
+      localStorage.setItem("dados", JSON.stringify(this.dadosSalvos))
       this.somarSaldo()
       this.resetDados()
     },
-    converterValor(valor) {
-     this.valor_total = valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
-    },
     somarSaldo() {
-      this.valor_total = this.dados_salvos.reduce((total, { valor }) => total + parseFloat(valor), 0)
-      this.converterValor(this.valor_total)
-      localStorage.setItem('valor_total', this.valor_total)
+      this.valorTotal = this.dadosSalvos.reduce((total, { valor }) => total + parseFloat(valor), 0)
+      localStorage.setItem("valorTotal", this.valorTotal)
     },
-
     resetDados() {
       this.dados = {
         tipo: "",
@@ -96,7 +81,8 @@ export default {
     }
   },
   mounted() {
-    this.valor_total = localStorage.getItem('valor_total')
+    this.dadosSalvos = JSON.parse(localStorage.getItem("dados")) || []
+    this.valorTotal = parseFloat(localStorage.getItem("valorTotal")) || 0
   }
 }
 </script>

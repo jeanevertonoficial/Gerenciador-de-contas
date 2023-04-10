@@ -108,6 +108,7 @@ html, body {
     color: var(--COLOR-BASE-TEXTO);
     font-weight: bold;
     cursor: pointer;
+    text-transform: uppercase;
 }
 
 .rodape-login a:hover {
