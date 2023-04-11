@@ -32,12 +32,11 @@
       <p class="titulo-valor">valor total</p>
       <div class="preco-total">
         <img src="/images/total-dolar.png">
-        <span class="preco-total">{{ valorTotal }}</span>
+        <span class="preco-total">{{ formatoValor }}</span>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 export default {
   name: "formulario-de-registro",
@@ -47,42 +46,38 @@ export default {
         tipo: "",
         valor: "",
         titulo: "",
-        ordenar: "",
-        dataCriacao: ""
       },
       dadosSalvos: [],
-      valorTotal: 0
-    }
+      valorTotal: 0,
+    };
   },
   computed: {
     formatoValor() {
-      return this.valorTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
-    }
+      return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(this.valorTotal);
+    },
   },
   methods: {
     salvar() {
-      const { titulo, valor, tipo } = this.dados
-      const data = { titulo, valor, tipo }
-      this.dadosSalvos.push(data)
-      localStorage.setItem("dados", JSON.stringify(this.dadosSalvos))
-      this.somarSaldo()
-      this.resetDados()
+      const { titulo, valor, tipo } = this.dados;
+      const data = { titulo, valor, tipo };
+      this.dadosSalvos.push(data);
+      localStorage.setItem("dados", JSON.stringify(this.dadosSalvos));
+      this.somarSaldo();
+      this.resetDados();
     },
     somarSaldo() {
-      this.valorTotal = this.dadosSalvos.reduce((total, { valor }) => total + parseFloat(valor), 0)
-      localStorage.setItem("valorTotal", this.valorTotal)
+      this.valorTotal = this.dadosSalvos.reduce((total, { valor }) => total + parseFloat(valor), 0);
+      localStorage.setItem("valorTotal", this.valorTotal);
     },
     resetDados() {
-      this.dados = {
-        tipo: "",
-        valor: "",
-        titulo: ""
-      }
-    }
+      this.dados.tipo = "";
+      this.dados.valor = "";
+      this.dados.titulo = "";
+    },
   },
   mounted() {
-    this.dadosSalvos = JSON.parse(localStorage.getItem("dados")) || []
-    this.valorTotal = parseFloat(localStorage.getItem("valorTotal")) || 0
-  }
-}
+    this.dadosSalvos = JSON.parse(localStorage.getItem("dados")) || [];
+    this.valorTotal = parseFloat(localStorage.getItem("valorTotal")) || 0;
+  },
+};
 </script>

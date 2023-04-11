@@ -29,7 +29,7 @@ header {
 }
 
 .header-botao-logar:hover {
-    color: #9A34FF;
+    color: var(--COLOR-BASE-SEGUNDARIA);
     transition: 0.5s;
 }
 .header-botao-logar a {

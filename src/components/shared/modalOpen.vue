@@ -1,46 +1,51 @@
 <template>
-  <div class="container-modal">
+  <div class="container-modal" v-if="abrirModal">
     <div class="modal">
-      <button class="btn-modal-fecha" @click="abrirMode = false">X</button>
+      <button class="btn-modal-fecha" title="clique aqui ou em qualquer lugar fora da seleção para fechar o modal" @click="abrirModal = false">X</button>
       <div class="corpo-modal">
-        <form method="post">
+        <form @submit.prevent="salvar">
           <div class="check-tipo input">
             <label for="titulo_card">
-              <h1>Editar Titulo</h1>
+              <h1>Editar Título</h1>
             </label>
-            <input type="text" name="titulo_card" id="titulo_card" :placeholder="titulo" :value="titulo">
+            <input type="text" name="titulo_card" id="titulo_card" :value="titulo">
           </div>
           <div class="check-tipo valor">
             <label for="preco_card">
               <h1>Editar Preço</h1>
             </label>
-            <input type="text" name="preco_card" id="preco_card" :placeholder="valor" :value="valor">
+            <input type="text" name="preco_card" id="preco_card" :value="valor">
           </div>
-          <button class="btn-salvar" type="submit" @click.prevent="salvar">SALVAR</button>
+          <button class="btn-salvar" type="submit">SALVAR</button>
         </form>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 export default {
   name: "modalOpen",
   props: ["valor", "titulo", "abrirMode"],
   data() {
     return {
-
+      abrirModal: this.abrirMode,
     };
+  },
+  computed: {
+    valorInput() {
+      return this.valor;
+    },
+    tituloInput() {
+      return this.titulo;
+    },
   },
   methods: {
     salvar() {
-      this.abrirMode == false;
-      console.log(this.abrirMode);
-    }
-  }
+      this.abrirModal = false;
+    },
+  },
 };
 </script>
-
 <style scoped>
 .btn-modal-fecha {
   border: none;
@@ -53,6 +58,7 @@ export default {
   font-weight: 800;
   cursor: pointer;
 }
+
 .container-modal {
   z-index: 2;
   position: fixed;
@@ -60,9 +66,10 @@ export default {
   top: 0px;
   left: 0px;
   width: 100%;
-  background: rgba(92, 41, 255, 0.24);
+  background: rgb(92 41 255 / 2%);
   backdrop-filter: blur(2px);
 }
+
 .modal {
   position: fixed;
   z-index: 3;

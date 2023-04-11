@@ -1,100 +1,77 @@
 <template>
-  <div class="container-cards overflow-hidden">
-    <span class="prev">&lt;</span>
-    <div class="card" @click="abrirModal" v-for="(dados, index) in JSON.parse(dados_salvos)" :key="index">
-      <modal-open v-if="abrirMode === true" :valor="dados.valor" :titulo="dados.titulo" :abrir-mode="abrirMode" />
+  <div class="container-cards overflow-hidden" ref="carousel">
+    <span class="prev" @click="scrollCarousel(-1)">&lt;</span>
+    <div class="card" v-for="(dados, index) in dadosSalvos" :key="index">
       <div class="card-img">
         <img src="/images/nu.png">
       </div>
-      <div class="card-desc">
+      <div class="card-desc" @click="openModal(dados)">
         <p class="titulo">{{ dados.titulo }}</p>
-        <p class="valor">valor</p>
-        <div class="div-preco-img">
+        <p class="valor">
           <img src="/images/cartoes-com-cifrao.png" alt="icone valor">
-          <p class="preco"> {{ dados.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) }}</p>
-        </div>
+          {{ formatCurrency(dados.valor) }}
+        </p>
       </div>
     </div>
-    <span class="next">&gt;</span>
+    <span class="next" @click="scrollCarousel(1)">&gt;</span>
+    <modal-open v-if="modalData" :valor="modalData.valor" :titulo="modalData.titulo" :abrir-mode="modalOpen" @close="closeModal" @save="saveModalData" />
   </div>
 </template>
-
 <script>
-import modalOpen from "@/components/shared/modalOpen.vue";
 import ModalOpen from "@/components/shared/modalOpen.vue";
 
 export default {
   name: "card",
   components: { ModalOpen },
-  computed: {
-    modalOpen() {
-      return {
-        modalOpen
-      };
-    }
-  },
   data() {
     return {
-      dados_salvos: localStorage.getItem("dados"),
-      abrirMode: false
+      dadosSalvos: [],
+      modalData: null,
+      modalOpen: false
     };
   },
   methods: {
-    abrirModal() {
-      this.abrirMode = true;
+    getDadosSalvos() {
+      const dados = localStorage.getItem("dados");
+      if (dados) {
+        try {
+          this.dadosSalvos = JSON.parse(dados);
+        } catch (e) {
+          console.error("Erro ao parsear dados salvos:", e);
+        }
+      }
     },
-    btnAvancaVolta() {
-      const carousel = document.querySelector(".container-cards");
-      const prevBtn = document.querySelector(".prev");
-      const nextBtn = document.querySelector(".next");
-
-      let scrollPosition = 0;
-      let isDown = false;
-      let startX;
-      let scrollLeft;
-
-      carousel.addEventListener("mousedown", e => {
-        isDown = true;
-        startX = e.pageX - carousel.offsetLeft;
-        scrollLeft = carousel.scrollLeft;
+    formatCurrency(value) {
+      return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    },
+    scrollCarousel(direction) {
+      const carousel = this.$refs.carousel;
+      const scrollStep = 300; // Defina a quantidade de pixels que deseja mover o carrossel
+      carousel.scrollBy({
+        top: 0,
+        left: scrollStep * direction,
+        behavior: "smooth"
       });
-      window.addEventListener("mouseleave", () => {
-        isDown = false;
-      });
-      carousel.addEventListener("mouseup", () => {
-        isDown = false;
-      });
-      carousel.addEventListener("mousemove", e => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - carousel.offsetLeft;
-        const walk = x - startX;
-        carousel.scrollLeft = scrollLeft - walk;
-      });
-
-      prevBtn.addEventListener("click", () => {
-        scrollPosition -= 300; // Defina a quantidade de pixels que deseja mover o carrossel
-        carousel.scrollTo({
-          top: 0,
-          left: scrollPosition,
-          behavior: "smooth"
-        });
-      });
-
-      nextBtn.addEventListener("click", () => {
-        scrollPosition += 300; // Defina a quantidade de pixels que deseja mover o carrossel
-        carousel.scrollTo({
-          top: 0,
-          left: scrollPosition,
-          behavior: "smooth"
-        });
-      });
+    },
+    openModal(dados) {
+      this.modalData = dados;
+      this.modalOpen = true;
+    },
+    closeModal() {
+      this.modalOpen = !this.modalOpen;
+      this.modalData = null;
+    },
+    saveModalData() {
+      const modalDataIndex = this.dadosSalvos.findIndex(dados => dados.titulo === this.modalData.titulo && dados.valor === this.modalData.valor);
+      if (modalDataIndex !== -1) {
+        this.dadosSalvos[modalDataIndex] = { titulo: this.modalData.titulo, valor: this.modalData.valor };
+        localStorage.setItem("dados", JSON.stringify(this.dadosSalvos));
+      }
+      this.modalOpen = false;
     }
-
   },
   mounted() {
-    this.btnAvancaVolta();
-    this.dados_salvos = localStorage.getItem("dados");
+    this.getDadosSalvos();
   }
 };
 </script>

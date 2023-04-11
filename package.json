@@ -12,7 +12,8 @@
     "eslint": "^8.37.0",
     "firebase": "^9.19.1",
     "vue": "^3.2.13",
-    "vue-router": "^4.0.3"
+    "vue-router": "^4.0.3",
+    "vuedraggable": "^2.24.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
