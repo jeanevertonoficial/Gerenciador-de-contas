@@ -73,12 +73,12 @@ span.next:checked, span.prev:checked {
     height: 86px;
     object-fit: cover;
     padding: 0px;
-    transition: .5s linear;
+    transition: 0.1s linear;
 }
 
 .card-img img:hover {
-    transition: .5s linear;
-    transform: rotate(45deg);
+    transition: 0.1s linear;
+    transform: rotate(15deg);
 }
 
 .card-desc {
@@ -93,14 +93,14 @@ span.next:checked, span.prev:checked {
 }
 
 .card-desc .titulo {
-    font-size: 9px;
+    font-size: 12px;
     line-height: 9px;
     color: var(--COLOR-BASE-SEGUNDARIA);
 }
 
 .card-desc .valor {
     font-weight: 700;
-    font-size: 11px;
+    font-size: 18px;
     line-height: 12px;
     color: var(--COLOR-BASE-PRIMARIA);
 }
@@ -120,4 +120,10 @@ span.next:checked, span.prev:checked {
     font-size: 18px;
     line-height: 21px;
     color: var(--COLOR-BASE-SEGUNDARIA);
+}
+.botoes-cards {
+    display: flex;
+    width: 95%;
+    justify-content: space-between;
+    margin-top: 10px;
 }

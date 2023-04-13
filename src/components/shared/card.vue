@@ -5,16 +5,21 @@
       <div class="card-img">
         <img src="/images/nu.png">
       </div>
-      <div class="card-desc" @click="openModal(dados)">
+      <div class="card-desc">
         <p class="titulo">{{ dados.titulo }}</p>
         <p class="valor">
-          <img src="/images/cartoes-com-cifrao.png" alt="icone valor">
+          <img src="/images/cartoes-com-cifrao.png" width="16" alt="icone valor">
           {{ formatCurrency(dados.valor) }}
         </p>
+        <div class="botoes-cards">
+          <div @click="excluirDado(index)"><img width="16" src="/images/excluir-padrao.png"></div>
+          <div @click="openModal(dados)"><img width="16" src="/images/editar.png"></div>
+        </div>
       </div>
     </div>
     <span class="next" @click="scrollCarousel(1)">&gt;</span>
-    <modal-open v-if="modalData" :valor="modalData.valor" :titulo="modalData.titulo" :abrir-mode="modalOpen" @close="closeModal" @save="saveModalData" />
+    <modal-open v-if="modalData" :valor="modalData.valor" :titulo="modalData.titulo" :abrir-mode="modalOpen"
+                @close="closeModal" @save="saveModalData" />
   </div>
 </template>
 <script>
@@ -52,6 +57,10 @@ export default {
         left: scrollStep * direction,
         behavior: "smooth"
       });
+    },
+    excluirDado(index) {
+      this.dadosSalvos.splice(index, 1);
+      localStorage.setItem("dados", JSON.stringify(this.dadosSalvos));
     },
     openModal(dados) {
       this.modalData = dados;

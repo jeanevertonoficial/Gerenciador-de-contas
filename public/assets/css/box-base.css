@@ -9,11 +9,15 @@
     max-width: 534px;
     height: 255.75px;
     display: flex;
-    /*left: 143px;*/
+    left: 330px;
     top: 147px;
     background: var(--COLOR-BASE-TEXTO);
     border-radius: 18.75px;
     justify-content: center;
+    cursor: grab;
+}
+.box-base:active {
+    cursor: grabbing;
 }
 
 .boletos {

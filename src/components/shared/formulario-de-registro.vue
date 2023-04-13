@@ -1,5 +1,5 @@
 <template>
-  <div class="formulario-corpo">
+  <div class="formulario-corpo" ref="formulario">
     <div class="base-formulario">
       <form @submit.prevent="salvar">
         <div class="check-tipo selecione">
@@ -38,6 +38,8 @@
   </div>
 </template>
 <script>
+import makeCalculatorDraggable from "@/model/draggable";
+
 export default {
   name: "formulario-de-registro",
   data() {
@@ -76,6 +78,7 @@ export default {
     },
   },
   mounted() {
+    makeCalculatorDraggable(this.$refs.formulario)
     this.dadosSalvos = JSON.parse(localStorage.getItem("dados")) || [];
     this.valorTotal = parseFloat(localStorage.getItem("valorTotal")) || 0;
   },
