@@ -147,7 +147,8 @@ h3 {
   color: var(--COLOR-BASE-PRIMARIA);
   display: flex;
   justify-content: space-between;
-  width: 19%;
+  max-width: 308px;
+  width: 308px;
   height: 50px;
   background: #f2f2f2;
   position: fixed;
