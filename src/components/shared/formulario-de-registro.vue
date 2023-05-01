@@ -39,6 +39,7 @@
 </template>
 <script>
 import makeCalculatorDraggable from "@/model/draggable";
+import {database, auth, db} from "@/main";
 
 export default {
   name: "formulario-de-registro",
@@ -55,20 +56,67 @@ export default {
   },
   computed: {
     formatoValor() {
-      return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(this.valorTotal);
+      return new Intl.NumberFormat("pt-BR", {style: "currency", currency: "BRL"}).format(this.valorTotal);
     },
   },
   methods: {
+    getDados() {
+      // Obter o ID do usuário logado
+      const userId = auth.currentUser.uid;
+
+      // Consultar os documentos da coleção "dados" filtrados pelo ID do usuário
+      db.collection("dados")
+          .where("userId", "==", userId)
+          .get()
+          .then((querySnapshot) => {
+            // Manipular os documentos recuperados aqui
+            querySnapshot.forEach((doc) => {
+              console.log(doc.id, " => ", doc.data());
+            });
+          })
+          .catch((error) => {
+            console.log("Erro ao consultar documentos: ", error);
+          });
+    },
     salvar() {
-      const { titulo, valor, tipo } = this.dados;
-      const data = { titulo, valor, tipo };
+      const {titulo, valor, tipo} = this.dados;
+      const data = {titulo, valor, tipo};
       this.dadosSalvos.push(data);
       localStorage.setItem("dados", JSON.stringify(this.dadosSalvos));
+
+      if (!auth.currentUser) {
+        console.error("User is not authenticated");
+        alert("User is not authenticated")
+        return;
+      }
+
+      database.ref('dados/' + auth.currentUser.uid).push({
+        titulo: this.dados.titulo,
+        valor: this.dados.valor,
+        tipo: this.dados.tipo,
+      })
+          .then(() => {
+            console.log('Dados salvos com sucesso!')
+            alert('Dados salvos com sucesso!')
+          })
+          .catch((error) => {
+            console.error(error)
+          });
+
       this.somarSaldo();
       this.resetDados();
     },
     somarSaldo() {
-      this.valorTotal = this.dadosSalvos.reduce((total, { valor }) => total + parseFloat(valor), 0);
+      const valores = this.dadosSalvos.map(({valor}) => parseFloat(valor));
+      console.log('Valores: ' + valores)
+      const soma = valores.reduce((total, valor) => total + valor, 0);
+      console.log('Soma:' + soma)
+      this.valorTotal = soma;
+
+      database.ref('valorTotal/' + auth.currentUser.uid).push({
+        valorTotal: this.valorTotal
+      })
+
       localStorage.setItem("valorTotal", this.valorTotal);
     },
     resetDados() {
@@ -76,8 +124,12 @@ export default {
       this.dados.valor = "";
       this.dados.titulo = "";
     },
+    atualizar() {
+      location.reload()
+    }
   },
   mounted() {
+    this.getDados()
     makeCalculatorDraggable(this.$refs.formulario)
     this.dadosSalvos = JSON.parse(localStorage.getItem("dados")) || [];
     this.valorTotal = parseFloat(localStorage.getItem("valorTotal")) || 0;

@@ -36,3 +36,20 @@ header {
     text-decoration: none;
     color: inherit;
 }
+.login_info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login_info button {
+    height: 20px;
+    border: none;
+    background: aliceblue;
+    border-radius: 25px;
+    color: #444;
+}
+.login_info p {
+    margin-left: 5px;
+    margin-right: 10px;
+}

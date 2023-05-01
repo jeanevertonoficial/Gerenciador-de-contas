@@ -11,17 +11,50 @@
         <img src="/images/icone-persona.png">
       </div>
       <div class="header-botao-logar">
-        <router-link to="/login">
-          Fazer login
-        </router-link>
+        <div class="login_info" v-if="user">
+          <p>{{ user.email }}</p>
+          <button @click="signOut">Sair</button>
+        </div>
+        <div v-else>
+          <router-link to="/login">
+            Fazer login
+          </router-link>
+        </div>
       </div>
     </div>
   </header>
 </template>
 
 <script>
+import {signOut} from "firebase/auth";
+import {auth} from "@/main";
+
 export default {
   name: "headerDashboard",
-  props: ["titulo_centro"]
+  props: ["titulo_centro"],
+  data() {
+    return {
+      user: null,
+    }
+  },
+  mounted() {
+    auth.onAuthStateChanged((user) => {
+      this.user = user;
+    });
+  },
+  methods: {
+    signOut() {
+      signOut(auth)
+          .then(() => {
+            console.log("User signed out");
+            this.$router.push('/login')
+            // do something after sign-out
+          })
+          .catch((error) => {
+            console.error("Error signing out:", error);
+            // handle the error
+          });
+    },
+  }
 };
 </script>

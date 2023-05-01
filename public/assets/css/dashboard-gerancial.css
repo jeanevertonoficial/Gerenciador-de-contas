@@ -18,3 +18,16 @@
     margin: auto;
     width: 70%;
 }
+label.criarLoginLabel {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    color: aliceblue;
+    font-size: small;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.none {
+    display: none;
+}

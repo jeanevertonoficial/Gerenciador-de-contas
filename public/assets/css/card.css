@@ -59,7 +59,7 @@ span.next:checked, span.prev:checked {
     min-width: 126.75px;
     height: 156px;
     top: 70px;
-
+    cursor: auto;
     background: #D7D7D7;
     border-radius: 9px;
 }
@@ -67,12 +67,18 @@ span.next:checked, span.prev:checked {
 .card:nth-child(1) {
     margin-left: 15px;
 }
-
+.card-img {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .card-img img {
     width: 100%;
+    max-width: 120px;
     height: 86px;
-    object-fit: cover;
+    object-fit: contain;
     padding: 0px;
+    border-radius: 5px;
     transition: 0.1s linear;
 }
 
@@ -93,16 +99,42 @@ span.next:checked, span.prev:checked {
 }
 
 .card-desc .titulo {
+    margin: 5px 0px 0px;
     font-size: 12px;
+    font-weight: bold;
     line-height: 9px;
-    color: var(--COLOR-BASE-SEGUNDARIA);
+    text-transform: uppercase;
+    background: #9a34ff;
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    height: 20px;
+    align-items: center;
+    border-radius: 4px 4px 0 0;
+    max-height: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.card-desc:hover .titulo:hover {
+    max-height: none !important;
 }
 
 .card-desc .valor {
-    font-weight: 700;
+    font-weight: 900;
     font-size: 18px;
-    line-height: 12px;
+    line-height: 0;
     color: var(--COLOR-BASE-PRIMARIA);
+    margin-bottom: -12px;
+    background: var(--COLOR-BASE-TEXTO);
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 0px;
+    height: 20px;
+    margin-top: 0px;
+    margin-bottom: 5px;
+    border-radius: 0 0 4px 4px;
 }
 
 .div-preco-img {
@@ -125,5 +157,8 @@ span.next:checked, span.prev:checked {
     display: flex;
     width: 95%;
     justify-content: space-between;
-    margin-top: 10px;
+    margin-top: 0px;
+}
+.botoes-cards img {
+    cursor: pointer;
 }

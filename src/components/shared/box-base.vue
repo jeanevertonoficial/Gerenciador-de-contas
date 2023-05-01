@@ -5,7 +5,7 @@
         <div class="titulo_base">
           {{ titulo_cartao }}
         </div>
-        <Card />
+        <CardCartao />
       </div>
     </div>
     <div class="box-base boletos" ref="box_boleto">
@@ -13,7 +13,7 @@
         <div class="titulo_base">
           {{ titulo_boleto }}
         </div>
-        <Card />
+        <CardBoleto />
       </div>
     </div>
     <FormularioDeRegistro />
@@ -21,19 +21,15 @@
 </template>
 
 <script>
-import Card from "@/components/shared/card.vue";
+import CardBoleto from "@/components/shared/card-boleto";
+import CardCartao from "@/components/shared/card-cartao";
 import FormularioDeRegistro from "@/components/shared/formulario-de-registro.vue";
 import makeCalculatorDraggable from "@/model/draggable";
 
 export default {
   name: "BoxBase",
-  components: { FormularioDeRegistro, Card },
+  components: { FormularioDeRegistro, CardBoleto, CardCartao },
   props: ["titulo_cartao", "titulo_boleto"],
-  computed: {
-    dados_salvos() {
-      return localStorage.getItem("dados");
-    },
-  },
   mounted() {
     makeCalculatorDraggable(this.$refs.box_cartao)
     makeCalculatorDraggable(this.$refs.box_boleto)
