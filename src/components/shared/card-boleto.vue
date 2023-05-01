@@ -3,7 +3,7 @@
     <span class="prev" @click="scrollCarousel(-1)">&lt;</span>
     <div class="card" v-for="(dados, index) in dadosSalvos" :key="index">
       <div class="card-img">
-        <img src="/images/nu.png">
+        <img src="/images/boleto-vetor.png">
       </div>
       <div class="card-desc">
         <p class="titulo">{{ dados.titulo }}</p>
@@ -12,7 +12,7 @@
           {{ formatCurrency(dados.valor) }}
         </p>
         <div class="botoes-cards">
-          <div @click="excluirDado(index)"><img width="16" src="/images/excluir-padrao.png"></div>
+          <div @click="excluirDado(index, dados.valor)"><img width="16" src="/images/excluir-padrao.png"></div>
           <div @click="openModal(dados)"><img width="16" src="/images/editar.png"></div>
         </div>
       </div>
@@ -26,7 +26,7 @@
 import ModalOpen from "@/components/shared/modalOpen.vue";
 
 export default {
-  name: "card",
+  name: "cardBoleto",
   components: { ModalOpen },
   data() {
     return {
@@ -40,7 +40,8 @@ export default {
       const dados = localStorage.getItem("dados");
       if (dados) {
         try {
-          this.dadosSalvos = JSON.parse(dados);
+          const parsedData = JSON.parse(dados);
+          this.dadosSalvos = parsedData.filter(dado => dado.tipo === "boleto");
         } catch (e) {
           console.error("Erro ao parsear dados salvos:", e);
         }
@@ -58,9 +59,14 @@ export default {
         behavior: "smooth"
       });
     },
-    excluirDado(index) {
+    excluirDado(index, valor) {
+      const valorTot = localStorage.getItem('valorTotal')
+      const valoratotalAtt = valorTot - valor
+
+      localStorage.setItem('valorTotal', valoratotalAtt)
       this.dadosSalvos.splice(index, 1);
       localStorage.setItem("dados", JSON.stringify(this.dadosSalvos));
+      this.atualizar();
     },
     openModal(dados) {
       this.modalData = dados;
@@ -77,6 +83,9 @@ export default {
         localStorage.setItem("dados", JSON.stringify(this.dadosSalvos));
       }
       this.modalOpen = false;
+    },
+    atualizar() {
+      location.reload()
     }
   },
   mounted() {

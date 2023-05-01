@@ -20,7 +20,7 @@ export default {
   data () {
     return {
       titulo_central: "VIVA SEMPRE ORGANIZADO",
-      titulo_cartao: "CARTÕES DE CRÉDITOS/DÉBITOS",
+      titulo_cartao: "CARTÕES DE CRÉDITOS",
       titulo_boleto: "BOLETOS BANCÁRIOS"
     }
   }

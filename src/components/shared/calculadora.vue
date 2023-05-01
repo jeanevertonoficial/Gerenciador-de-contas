@@ -1,26 +1,28 @@
 <template>
-  <div class="botao_canto" @click="abrir_calculadora" ref="abrir_calculadora">{{ openCalculadora.txt_calculadora }}
+  <div class="botao_canto" @click="abrir_calculadora">{{ openCalculadora.txt_calculadora }}
   </div>
-  <div v-if="openCalculadora.value" class="calculadora" ref="calculator">
-    <input type="text" v-model="display" class="visor" placeholder="0.0" @change="calculate">
-    <div class="base-numero">
-      <button v-for="button in buttons"
-              :key="button.label"
-              @click="handleButtonClick(button)"
-              :class="button.class">
-        {{ button.label }}
-      </button>
-    </div>
-    <div class="ver-historico" v-if="this.ocultar == false && this.history !=''" @click="ocultarHistorico">abrir
-      hitórico
-    </div>
-    <div class="historico-calculadora" v-if="this.history != '' && ocultar">
-      <h3>Histórico: <span @click="ocultarHistorico">ocultar</span></h3>
-      <ul>
-        <li v-for="(calculation, index) in history.slice().reverse()" :key="index">{{ calculation }}</li>
-      </ul>
-      <div class="base-btn-limpar">
-        <button class="btn-salvar btn-limpar" @click="clearHistory">Limpar</button>
+  <div ref="abrircalculadora">
+    <div v-if="openCalculadora.value" class="calculadora">
+      <input type="text" v-model="display" class="visor" placeholder="0.0" @change="calculate">
+      <div class="base-numero">
+        <button v-for="button in buttons"
+                :key="button.label"
+                @click="handleButtonClick(button)"
+                :class="button.class">
+          {{ button.label }}
+        </button>
+      </div>
+      <div class="ver-historico" v-if="this.ocultar == false && this.history !=''" @click="ocultarHistorico">abrir
+        hitórico
+      </div>
+      <div class="historico-calculadora" v-if="this.history != '' && ocultar">
+        <h3>Histórico: <span @click="ocultarHistorico">ocultar</span></h3>
+        <ul>
+          <li v-for="(calculation, index) in history.slice().reverse()" :key="index">{{ calculation }}</li>
+        </ul>
+        <div class="base-btn-limpar">
+          <button class="btn-salvar btn-limpar" @click="clearHistory">Limpar</button>
+        </div>
       </div>
     </div>
   </div>
@@ -40,30 +42,34 @@ export default {
         txt_calculadora: "Calculadora"
       },
       buttons: [
-        { label: "+", value: "+", class: "operador" },
-        { label: "-", value: "-", class: "operador" },
-        { label: "*", value: "*", class: "operador" },
-        { label: "/", value: "/", class: "operador" },
-        { label: "7", value: "7", class: "numero" },
-        { label: "8", value: "8", class: "numero" },
-        { label: "9", value: "9", class: "numero" },
-        { label: "4", value: "4", class: "numero" },
-        { label: "5", value: "5", class: "numero" },
-        { label: "6", value: "6", class: "numero" },
-        { label: "1", value: "1", class: "numero" },
-        { label: "2", value: "2", class: "numero" },
-        { label: "3", value: "3", class: "numero" },
-        { label: "0", value: "0", class: "numero" },
-        { label: ".", value: ".", class: "numero" },
-        { label: "C", value: "clear", class: "limpa" },
-        { label: "=", value: "equal", class: "igual" }
+        {label: "+", value: "+", class: "operador"},
+        {label: "-", value: "-", class: "operador"},
+        {label: "*", value: "*", class: "operador"},
+        {label: "/", value: "/", class: "operador"},
+        {label: "7", value: "7", class: "numero"},
+        {label: "8", value: "8", class: "numero"},
+        {label: "9", value: "9", class: "numero"},
+        {label: "4", value: "4", class: "numero"},
+        {label: "5", value: "5", class: "numero"},
+        {label: "6", value: "6", class: "numero"},
+        {label: "1", value: "1", class: "numero"},
+        {label: "2", value: "2", class: "numero"},
+        {label: "3", value: "3", class: "numero"},
+        {label: "0", value: "0", class: "numero"},
+        {label: ".", value: ".", class: "numero"},
+        {label: "C", value: "clear", class: "limpa"},
+        {label: "=", value: "equal", class: "igual"}
       ],
       history: []
     };
   },
   mounted() {
-    makeCalculatorDraggable(this.$refs.abrir_calculadora);
-    this.history = JSON.parse(localStorage.getItem("historico_calculo"));
+    makeCalculatorDraggable(this.$refs.abrircalculadora);
+    if (JSON.parse(localStorage.getItem("historico_calculo")) != null) {
+      this.history = JSON.parse(localStorage.getItem("historico_calculo"));
+    } else {
+      this.history = []
+    }
   },
   methods: {
     handleButtonClick(button) {
@@ -151,7 +157,7 @@ h3 {
   width: 308px;
   height: 50px;
   background: #f2f2f2;
-  position: fixed;
+  position: absolute;
   margin-top: -10px;
   align-items: center;
 }
@@ -285,10 +291,7 @@ button.limpa, button.igual {
 }
 
 .base-btn-limpar {
-  position: absolute;
   width: 100%;
-  top: 45rem;
-  left: -1px;
   background: #f2f2f2;
 }
 </style>

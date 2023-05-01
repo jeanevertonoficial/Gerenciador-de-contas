@@ -66,9 +66,15 @@ export default {
       localStorage.setItem("dados", JSON.stringify(this.dadosSalvos));
       this.somarSaldo();
       this.resetDados();
+      this.atualizar();
+
     },
     somarSaldo() {
-      this.valorTotal = this.dadosSalvos.reduce((total, { valor }) => total + parseFloat(valor), 0);
+      const valores = this.dadosSalvos.map(({ valor }) => parseFloat(valor));
+      console.log('Valores: ' + valores)
+      const soma = valores.reduce((total, valor) => total + valor, 0);
+      console.log('Soma:' + soma)
+      this.valorTotal = soma;
       localStorage.setItem("valorTotal", this.valorTotal);
     },
     resetDados() {
@@ -76,6 +82,9 @@ export default {
       this.dados.valor = "";
       this.dados.titulo = "";
     },
+    atualizar() {
+      location.reload()
+    }
   },
   mounted() {
     makeCalculatorDraggable(this.$refs.formulario)
