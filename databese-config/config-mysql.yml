@@ -1,0 +1,7 @@
+connection:
+  host:     localhost
+  driver:   mysql
+  port:     3306
+  username: serrano
+  password: Jean9882
+  database: vlance_leiloesjudiciais

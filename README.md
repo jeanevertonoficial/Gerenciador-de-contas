@@ -22,3 +22,17 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### Build do docker
+```
+docker-compose build
+```
+
+### start da aplicação
+```
+docker-compose up -d
+```
+### Banco da aplicação
+```
+npm install mysql
+```

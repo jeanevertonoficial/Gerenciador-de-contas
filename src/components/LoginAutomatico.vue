@@ -46,6 +46,7 @@
           </div>
         </form>
       </div>
+      <notificacoes-alert v-show="alerta" :message="notificacao.descricao" :type="notificacao.tipo" :icon="notificacao.icone"></notificacoes-alert>
       <div class="rodape-login">
         <router-link to="/login" class="criar none" @click="voltar">Entrar</router-link>
         <p class="by-descricao">by vida sempre organizado</p>
@@ -64,86 +65,104 @@ import {
 } from "firebase/auth";
 import {auth} from "@/main";
 import router from "@/router";
+import notificacoesAlert from "@/components/shared/notificacoes-alert.vue";
 
 export default {
   name: "LoginAutomatico",
-  setup() {
-    const email = ref("");
-    const password = ref("");
-
-    const createLogin = () => {
-      createUserWithEmailAndPassword(auth, email.value, password.value)
-          .then((response) => {
-            console.log('Novo Usuário Criado: ' + response.user.email)
-            router.push({name: 'dashboard'})
-          })
-          .catch((error) => {
-            alert('Popup do E-mail fechado sem concluir o login, para logar clique no botão (continuar com E-mail).')
-            console.error(error);
-          });
-    };
-
-    const abrirLogin = () => {
-      const log = document.querySelectorAll('.logar')
-      const criar = document.querySelectorAll('.criar')
-
-      log.forEach(log => {
-        log.classList.add('none');
-      });
-
-      criar.forEach(criar => {
-        criar.classList.remove('none');
-      });
-    };
-
-    const voltar = () => {
-      const log = document.querySelectorAll('.logar')
-      const criar = document.querySelectorAll('.criar')
-
-      log.forEach(log => {
-        log.classList.remove('none');
-      });
-
-      criar.forEach(criar => {
-        criar.classList.add('none');
-      });
-    };
-
-    const loginWithEmail = () => {
-      signInWithEmailAndPassword(auth, email.value, password.value)
-          .then((response) => {
-            console.log('Usuário Logado: ' + response.user.email)
-            router.push({name: 'dashboard'})
-          })
-          .catch((error) => {
-            alert('Popup do E-mail fechado sem concluir o login, para logar clique no botão (continuar com E-mail).')
-            console.error(error);
-          });
-    };
-
-    // const loginWithFacebook = () => {
-    //   const provider = new FacebookAuthProvider();
-    //
-    //   signInWithPopup(auth, provider)
-    //       .then(() => {
-    //         alert('Login realizado com sucesso.')
-    //         console.log("Logged in with Facebook");
-    //       })
-    //       .catch((error) => {
-    //         error
-    //         alert('Popup do Facebook fechado sem concluir o login, para logar clique no botão (continuar com Facebook).')
-    //       });
-    // };
-
+  components:{ notificacoesAlert },
+  data() {
     return {
-      email,
-      password,
-      loginWithEmail,
-      // loginWithFacebook,
-      createLogin,
-      abrirLogin,
-      voltar
+      email: "",
+      password: "",
+      connection: null,
+      alerta: false,
+      notificacao: {
+        descricao: "",
+        icone: "",
+        tipo: "",
+      },
     };
-  }
-};
+  },
+  methods: {
+    createLogin() {
+      createUserWithEmailAndPassword(auth, this.email, this.password)
+          .then((response) => {
+            console.log("Novo Usuário Criado: " + response.user.email);
+            this.notificacao.descricao = "Login criado com sucesso";
+            this.notificacao.icone = "check";
+            this.notificacao.tipo = "success";
+            //Salvar o e-mail do usuário no banco de dados MySQL
+            // const emailValue = response.user.email;
+            // const sql = `INSERT INTO cliente (email) VALUES (?)`;
+            // const values = ["", emailValue];
+            // this.connection.query(sql, values, (error, results, fields) => {
+            //   if (error) {
+            //     console.error(error);
+            //   } else {
+            //     alert("E-mail do usuário salvo no banco de dados MySQL");
+            //     console.log("E-mail do usuário salvo no banco de dados MySQL");
+            //   }
+            // });
+
+            router.push({ name: "dashboard" });
+          })
+          .catch((error) => {
+            this.notificacao.descricao = "E-email ou senha incorreto";
+            this.notificacao.icone = "danger";
+            this.notificacao.tipo = "danger";
+            console.error(error);
+          });
+    },
+    abrirLogin() {
+      const log = document.querySelectorAll(".logar");
+      const criar = document.querySelectorAll(".criar");
+
+      log.forEach((log) => {
+        log.classList.add("none");
+      });
+
+      criar.forEach((criar) => {
+        criar.classList.remove("none");
+      });
+    },
+    voltar() {
+      const log = document.querySelectorAll(".logar");
+      const criar = document.querySelectorAll(".criar");
+
+      log.forEach((log) => {
+        log.classList.remove("none");
+      });
+
+      criar.forEach((criar) => {
+        criar.classList.add("none");
+      });
+    },
+    loginWithEmail() {
+      this.alerta = false;
+      signInWithEmailAndPassword(auth, this.email, this.password)
+          .then((response) => {
+            this.alerta = true
+            this.notificacao.descricao = "Logado com sucesso";
+            this.notificacao.icone = "check";
+            this.notificacao.tipo = "success";
+            router.push({ name: "dashboard" });
+          })
+          .catch((error) => {
+            this.alerta = true
+            this.notificacao.descricao = "E-email não cadastrado";
+            this.notificacao.icone = "danger";
+            this.notificacao.tipo = "danger";
+            console.error(error.message);
+          });
+    },
+  },
+  // mounted() {
+  //   this.connection = mysql.createConnection({
+  //     host: process.env.VUE_APP_DATABASE_ROST,
+  //     user: process.env.VUE_APP_DATABASE_USERNAME,
+  //     password: process.env.VUE_APP_DATABASE_PASSWORD,
+  //     database: process.env.VUE_APP_DATABASE_DBNAME,
+  //   });
+  // },
+}
 </script>
