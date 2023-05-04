@@ -40,6 +40,7 @@
 <script>
 import makeCalculatorDraggable from "@/model/draggable";
 import {database, auth, db} from "@/main";
+import axios from "axios"
 
 export default {
   name: "formulario-de-registro",
@@ -83,6 +84,23 @@ export default {
       const data = {titulo, valor, tipo};
       this.dadosSalvos.push(data);
       localStorage.setItem("dados", JSON.stringify(this.dadosSalvos));
+      console.log(this.dadosSalvos)
+      auth.onAuthStateChanged((user) => {
+        this.user = user;
+      });
+
+      axios.post('/api/usuarios', {
+        titulo: titulo,
+        valor: valor,
+        tipo: tipo,
+        email: 'jeanever39@gmail.com'
+      })
+          .then(response => {
+            console.log(response.data.message);
+          })
+          .catch(error => {
+            console.log(error);
+          });
 
       if (!auth.currentUser) {
         console.error("User is not authenticated");
