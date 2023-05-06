@@ -6,6 +6,19 @@ services:
       context: .
     ports:
       - "8081:80"
+    container_name: "frontend-vue"
     environment:
       - NODE_ENV=production
-
+  backend:
+    build: ./backend
+    container_name: "backend-laravel"
+    ports:
+      - "8000:8000"
+  db:
+    image: mysql:5.7
+    container_name: "database-php"
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: app
+    ports:
+      - "3306:3306"

@@ -6,6 +6,9 @@ docker-compose build
 # Inicia o contêiner do Docker Compose
 docker-compose up -d
 
+#build do vue
+npm run build
+
 # Aguarda alguns segundos para que o Nginx inicie completamente
 sleep 5
 
