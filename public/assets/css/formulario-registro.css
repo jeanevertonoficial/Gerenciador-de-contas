@@ -171,3 +171,13 @@ input[type="radio"] {
 .valor, .titulo, .selecione {
     margin-top: 15px;
 }
+
+.valor input {
+    font-size: 18px;
+    color: var(--COLOR-VALOR-TOTAL) !important;
+}
+
+.titulo input {
+    font-size: 14px;
+    color: var(--COLOR-VALOR-TOTAL) !important;
+}

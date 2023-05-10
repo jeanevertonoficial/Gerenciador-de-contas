@@ -17,12 +17,11 @@ class UsuarioController extends Controller
         //pegar dados cadastrado com id = email como parametro vindo do front
         $dados = DB::table('clientes')
             ->join('usuarios', 'clientes.id', '=', 'usuarios.cliente_id')
-            ->select('clientes.id', 'usuarios.titulo', 'usuarios.valor', 'usuarios.tipo')
+            ->select('*')
             ->where('email', $id)
             ->orderBy('usuarios.valor', 'ASC')
             ->get();
 
-       // dd($dados);
         return response()->json($dados, 201);
     }
 
@@ -80,8 +79,15 @@ class UsuarioController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $usuario = Usuario::find($id);
+        if ($usuario) {
+            $usuario->delete();
+            return response()->json(['message' => 'Deletado com sucesso.'], 201);
+        } else {
+            return response()->json(['message' => 'Usuário não encontrado.'], 400);
+        }
     }
+
 }

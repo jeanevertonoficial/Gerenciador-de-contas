@@ -105,7 +105,7 @@ span.next:checked, span.prev:checked {
     line-height: 9px;
     text-transform: uppercase;
     background: #9a34ff;
-    width: 80%;
+    width: 85%;
     display: flex;
     justify-content: center;
     height: 20px;
@@ -121,12 +121,12 @@ span.next:checked, span.prev:checked {
 
 .card-desc .valor {
     font-weight: 900;
-    font-size: 18px;
+    font-size: 12px;
     line-height: 0;
     color: var(--COLOR-BASE-PRIMARIA);
     margin-bottom: -12px;
     background: var(--COLOR-BASE-TEXTO);
-    width: 80%;
+    width: 85%;
     display: flex;
     align-items: center;
     justify-content: space-evenly;

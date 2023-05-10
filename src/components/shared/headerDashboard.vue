@@ -11,8 +11,8 @@
         <img src="/images/icone-persona.png">
       </div>
       <div class="header-botao-logar">
-        <div class="login_info" v-if="user">
-          <p>{{ user.email }}</p>
+        <div class="login_info" v-if="userEmail">
+          <p>{{ userEmail.email }}</p>
           <button @click="signOut">Sair</button>
         </div>
         <div v-else>
@@ -34,15 +34,18 @@ export default {
   props: ["titulo_centro"],
   data() {
     return {
-      user: null,
+      userEmail: null,
     }
   },
-  mounted() {
-    auth.onAuthStateChanged((user) => {
-      this.user = user;
-    });
+  created() {
+    this.usuario()
   },
   methods: {
+    usuario() {
+      auth.onAuthStateChanged((user) => {
+        this.userEmail = user;
+      });
+    },
     signOut() {
       signOut(auth)
           .then(() => {
