@@ -24,6 +24,7 @@
     "tls-browserify": "^0.2.2",
     "url": "^0.11.0",
     "util": "^0.12.5",
+    "v-money": "^0.8.1",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuedraggable": "^2.24.3"

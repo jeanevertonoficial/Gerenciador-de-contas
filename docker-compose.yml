@@ -18,7 +18,7 @@ services:
     image: mysql:5.7
     container_name: "database-php"
     environment:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: app
+      MYSQL_ROOT_PASSWORD: Jean9882
+      MYSQL_DATABASE: gerenciador_de_contas
     ports:
-      - "3306:3306"
+      - "3307:3306"

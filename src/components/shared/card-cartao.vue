@@ -1,7 +1,7 @@
 <template>
   <div class="container-cards overflow-hidden" ref="carousel">
     <span class="prev" @click="scrollCarousel(-1)">&lt;</span>
-    <div class="card" v-for="(dados, index) in dadosSalvos" :key="index">
+    <div class="card" v-for="(dados, index) in dadosSalvos" :key="index" v-show="dados.tipo === 'cartao'">
       <div class="card-img">
         <img :src="tipoImagem(dados)">
       </div>
@@ -12,58 +12,59 @@
           {{ formatCurrency(dados.valor) }}
         </p>
         <div class="botoes-cards">
-          <div @click="excluirDado(index, dados.valor)"><img width="16" src="/images/excluir-padrao.png"></div>
+          <div @click="excluirDado(dados.id, dados.valor)"><img width="16" src="/images/excluir-padrao.png"></div>
           <div @click="openModal(dados)"><img width="16" src="/images/editar.png"></div>
         </div>
       </div>
     </div>
     <span class="next" @click="scrollCarousel(1)">&gt;</span>
     <modal-open v-if="modalData" :valor="modalData.valor" :titulo="modalData.titulo" :abrir-mode="modalOpen"
-                @close="closeModal" @save="saveModalData" />
+                @close="closeModal" @save="saveModalData"/>
   </div>
 </template>
 <script>
 import ModalOpen from "@/components/shared/modalOpen.vue";
+import axios from "axios";
 
 export default {
   name: "cardCartao",
-  components: { ModalOpen },
+  components: {ModalOpen},
   data() {
     return {
+      user: null,
       dadosSalvos: [],
       modalData: null,
       modalOpen: false,
       imagens: {
-        'nubank':'/images/nu.png',
-        'bb':'/images/bb.jpeg',
-        'boleto':'/images/boleto.png',
-        'c6':'/images/c6.jpg',
-        'renner':'/images/renner.jpg',
-        'caixa':'/images/caixa.png',
-        'itau':'/images/itau.png',
-        'cartoes':'/images/cartoes.jpeg',
+        'nubank': '/images/nu.png',
+        'bb': '/images/bb.jpeg',
+        'boleto': '/images/boleto.png',
+        'c6': '/images/c6.jpg',
+        'renner': '/images/renner.jpg',
+        'caixa': '/images/caixa.png',
+        'itau': '/images/itau.png',
+        'cartoes': '/images/cartoes.jpeg',
       },
       imagensTipo: '/images/cartoes.jpeg',
     };
   },
   methods: {
+    getDados() {
+      axios.get(`http://127.0.0.1:8000/api/usuarios/dados/jeanever39@gmail.com`)
+          .then((querySnapshot) => {
+            console.log(querySnapshot.data)
+            this.dadosSalvos = querySnapshot.data
+          })
+          .catch((error) => {
+            console.log("Erro ao consultar documentos: ", error);
+          });
+    },
     tipoImagem(dados) {
       const chaveImagem = Object.keys(this.imagens).find(chave => dados.titulo.toLowerCase().includes(chave.toLowerCase()));
       return chaveImagem ? this.imagens[chaveImagem] : this.imagensTipo;
     },
-    getDadosSalvos() {
-      const dados = localStorage.getItem("dados");
-      if (dados) {
-        try {
-          const parsedData = JSON.parse(dados);
-          this.dadosSalvos = parsedData.filter(dado => dado.tipo === "cartao");
-        } catch (e) {
-          console.error("Erro ao parsear dados salvos:", e);
-        }
-      }
-    },
     formatCurrency(value) {
-      return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+      return value.toLocaleString("pt-BR", {style: "currency", currency: "BRL"});
     },
     scrollCarousel(direction) {
       const carousel = this.$refs.carousel;
@@ -74,14 +75,23 @@ export default {
         behavior: "smooth"
       });
     },
-    excluirDado(index, valor) {
+    excluirDado(id, valor) {
       const valorTot = localStorage.getItem('valorTotal')
       const valoratotalAtt = valorTot - valor
 
       localStorage.setItem('valorTotal', valoratotalAtt)
-      this.dadosSalvos.splice(index, 1);
+      this.dadosSalvos.splice(id, 1);
       localStorage.setItem("dados", JSON.stringify(this.dadosSalvos));
-      this.atualizar();
+
+      axios.delete('http://127.0.0.1:8000/api/usuarios/deletar/' + id)
+          .then((response) => {
+            console.log(response.data.message)
+            alert(response.data.message)
+          })
+          .catch((error) => { console.log(error.data.message)
+          })
+
+      // this.atualizar();
     },
     openModal(dados) {
       this.modalData = dados;
@@ -94,7 +104,7 @@ export default {
     saveModalData() {
       const modalDataIndex = this.dadosSalvos.findIndex(dados => dados.titulo === this.modalData.titulo && dados.valor === this.modalData.valor);
       if (modalDataIndex !== -1) {
-        this.dadosSalvos[modalDataIndex] = { titulo: this.modalData.titulo, valor: this.modalData.valor };
+        this.dadosSalvos[modalDataIndex] = {titulo: this.modalData.titulo, valor: this.modalData.valor};
         localStorage.setItem("dados", JSON.stringify(this.dadosSalvos));
       }
       this.modalOpen = false;
@@ -104,7 +114,7 @@ export default {
     }
   },
   mounted() {
-    this.getDadosSalvos();
-  }
+    this.getDados();
+  },
 };
 </script>

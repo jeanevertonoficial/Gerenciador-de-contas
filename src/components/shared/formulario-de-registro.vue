@@ -23,7 +23,7 @@
         </div>
         <div class="check-tipo valor">
           <h1>VALOR A PAGAR</h1>
-          <input type="text" v-model.trim="dados.valor" placeholder="R$ DIGITE AQUI O VALOR A PAGAR">
+          <input type="text" v-model.trim="dados.valor" placeholder="DIGITE AQUI O VALOR A PAGAR">
         </div>
         <button type="submit" class="btn-salvar">SALVAR</button>
       </form>
@@ -39,7 +39,7 @@
 </template>
 <script>
 import makeCalculatorDraggable from "@/model/draggable";
-import {database, auth, db} from "@/main";
+import {auth} from "@/main";
 import axios from "axios"
 
 export default {
@@ -61,24 +61,6 @@ export default {
     },
   },
   methods: {
-    getDados() {
-      // Obter o ID do usuário logado
-      const userId = auth.currentUser.uid;
-
-      // Consultar os documentos da coleção "dados" filtrados pelo ID do usuário
-      db.collection("dados")
-          .where("userId", "==", userId)
-          .get()
-          .then((querySnapshot) => {
-            // Manipular os documentos recuperados aqui
-            querySnapshot.forEach((doc) => {
-              console.log(doc.id, " => ", doc.data());
-            });
-          })
-          .catch((error) => {
-            console.log("Erro ao consultar documentos: ", error);
-          });
-    },
     salvar() {
       const {titulo, valor, tipo} = this.dados;
       const data = {titulo, valor, tipo};
@@ -89,7 +71,7 @@ export default {
         this.user = user;
       });
 
-      axios.post('/api/usuarios', {
+      axios.post(`http://127.0.0.1:8000/api/usuarios`, {
         titulo: titulo,
         valor: valor,
         tipo: tipo,
@@ -97,6 +79,7 @@ export default {
       })
           .then(response => {
             console.log(response.data.message);
+            alert(response.data.message)
           })
           .catch(error => {
             console.log(error);
@@ -108,19 +91,6 @@ export default {
         return;
       }
 
-      database.ref('dados/' + auth.currentUser.uid).push({
-        titulo: this.dados.titulo,
-        valor: this.dados.valor,
-        tipo: this.dados.tipo,
-      })
-          .then(() => {
-            console.log('Dados salvos com sucesso!')
-            alert('Dados salvos com sucesso!')
-          })
-          .catch((error) => {
-            console.error(error)
-          });
-
       this.somarSaldo();
       this.resetDados();
     },
@@ -130,10 +100,6 @@ export default {
       const soma = valores.reduce((total, valor) => total + valor, 0);
       console.log('Soma:' + soma)
       this.valorTotal = soma;
-
-      database.ref('valorTotal/' + auth.currentUser.uid).push({
-        valorTotal: this.valorTotal
-      })
 
       localStorage.setItem("valorTotal", this.valorTotal);
     },
@@ -147,9 +113,7 @@ export default {
     }
   },
   mounted() {
-    this.getDados()
     makeCalculatorDraggable(this.$refs.formulario)
-    this.dadosSalvos = JSON.parse(localStorage.getItem("dados")) || [];
     this.valorTotal = parseFloat(localStorage.getItem("valorTotal")) || 0;
   },
 };
