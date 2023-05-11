@@ -50,7 +50,9 @@
 .campos-inputs label {
     margin-bottom: 15px;
     font-weight: 700;
+    display: flex;
     color: white;
+    flex-direction: column;
 }
 .campos-inputs input {
     align-items: flex-end !important;
@@ -65,14 +67,27 @@
 }
 
 .botoes-login button, .campos-inputs input {
-    padding: 7px;
-    color: #4616AC;
+    padding: 10px;
+    color: var(--COLOR-BASE-PRIMARIA);
     font-size: 10px;
     font-weight: bolder;
     border-radius: 2px;
     border: none;
     font-family: roboto, arial, helvetica, sans-serif;
 }
+
+.botoes-login button {
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.botoes-login button:hover {
+    transition: 0.3s;
+    color: var(--COLOR-BASE-TEXTO);
+    background: var(--COLOR-BASE-PRIMARIA);
+}
+
 .texto-info {
     position: absolute;
     width: 629px;
@@ -103,6 +118,8 @@
     font-weight: bold;
     cursor: pointer;
     text-transform: uppercase;
+    display: flex;
+    justify-content: center;
 }
 
 .rodape-login a:hover {

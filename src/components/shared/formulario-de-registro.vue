@@ -90,7 +90,6 @@ export default {
         alert("User is not authenticated")
         return;
       }
-
       this.somarSaldo();
       this.resetDados();
     },

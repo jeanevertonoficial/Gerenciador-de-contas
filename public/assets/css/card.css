@@ -1,4 +1,3 @@
-
 .container-cards {
     width: 100%;
     height: 300px;
@@ -82,16 +81,12 @@ span.next:checked, span.prev:checked {
     transition: 0.1s linear;
 }
 
-.card-img img:hover {
-    transition: 0.1s linear;
-    transform: rotate(15deg);
-}
-
 .card-desc {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 10px;
 }
 
 .card-desc p {
@@ -104,7 +99,8 @@ span.next:checked, span.prev:checked {
     font-weight: bold;
     line-height: 9px;
     text-transform: uppercase;
-    background: #9a34ff;
+    color: #9a34ff;
+    font-weight: normal;
     width: 85%;
     display: flex;
     justify-content: center;
@@ -115,6 +111,7 @@ span.next:checked, span.prev:checked {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .card-desc:hover .titulo:hover {
     max-height: none !important;
 }
@@ -125,7 +122,6 @@ span.next:checked, span.prev:checked {
     line-height: 0;
     color: var(--COLOR-BASE-PRIMARIA);
     margin-bottom: -12px;
-    background: var(--COLOR-BASE-TEXTO);
     width: 85%;
     display: flex;
     align-items: center;
@@ -155,9 +151,11 @@ span.next:checked, span.prev:checked {
 }
 .botoes-cards {
     display: flex;
-    width: 95%;
-    justify-content: space-between;
-    margin-top: 0px;
+    width: 100%;
+    justify-content: space-around;
+    margin-top: -2px;
+    height: 100%;
+    align-items: center;
 }
 .botoes-cards img {
     cursor: pointer;

@@ -23,3 +23,12 @@ export default {
   }
 };
 </script>
+<style scoped>
+.container-main {
+  display: block;
+  margin: auto;
+  width: 70%;
+  height: 75%;
+  position: relative;
+}
+</style>

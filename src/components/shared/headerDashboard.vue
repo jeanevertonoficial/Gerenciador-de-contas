@@ -13,9 +13,12 @@
         <img class="menu" src="/images/icones/menu-aberto.png">
         <span class="span-manu none">
             <ul>
+              <router-link to="/">
+                <li>Inicio</li>
+              </router-link>
               <router-link to="/lista-dados-gerais">
-                <li class="">Todos Cadastrados</li>
-                </router-link>
+                <li>Todos Cadastrados</li>
+              </router-link>
             </ul>
         </span>
       </div>
@@ -24,7 +27,6 @@
       </div>
       <div class="header-botao-logar">
         <div class="login_info" v-if="userEmail">
-          <p>{{ userEmail.email }}</p>
           <button @click="signOut">Sair</button>
         </div>
         <div v-else>
@@ -55,6 +57,7 @@ export default {
   mounted() {
     const menu = document.querySelector('.menu')
     const menuOculto = document.querySelector('.span-manu')
+
     menu.addEventListener('click', () => {
       menuOculto.classList.toggle('none')
     });
