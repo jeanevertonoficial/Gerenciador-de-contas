@@ -4,14 +4,13 @@
 docker-compose build
 
 # Inicia o contêiner do Docker Compose
-docker-compose up -d mysql nginx
+docker-compose up -d
 
-# Aguarda alguns segundos para que os serviços iniciem completamente
-sleep 10
-
-# Executa os comandos de build e serve do Vue
+#build do vue
 npm run build
-npm run serve
+
+# Aguarda alguns segundos para que o Nginx inicie completamente
+sleep 5
 
 # Abre a aplicação Vue.js no navegador padrão
 open http://localhost:8081

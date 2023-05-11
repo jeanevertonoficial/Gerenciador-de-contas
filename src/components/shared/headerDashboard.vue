@@ -1,24 +1,12 @@
 <template>
   <header>
     <div class="header-logo">
-      <router-link to="/">
-        <img src="/images/LOGO.png" alt="logo">
-      </router-link>
+      <img src="/images/LOGO.png" alt="logo">
     </div>
     <div class="header-titulo-centro">
       {{ titulo_centro }}
     </div>
     <div class="header-logar">
-      <div class="burger-menu">
-        <img class="menu" src="/images/icones/menu-aberto.png">
-        <span class="span-manu none">
-            <ul>
-              <router-link to="/lista-dados-gerais">
-                <li class="">Todos Cadastrados</li>
-                </router-link>
-            </ul>
-        </span>
-      </div>
       <div class="header-logo">
         <img src="/images/icone-persona.png">
       </div>
@@ -52,13 +40,6 @@ export default {
   created() {
     this.usuario()
   },
-  mounted() {
-    const menu = document.querySelector('.menu')
-    const menuOculto = document.querySelector('.span-manu')
-    menu.addEventListener('click', () => {
-      menuOculto.classList.toggle('none')
-    });
-  },
   methods: {
     usuario() {
       auth.onAuthStateChanged((user) => {
@@ -80,9 +61,3 @@ export default {
   }
 };
 </script>
-<style scoped>
-.none {
-  display: none;
-}
-
-</style>

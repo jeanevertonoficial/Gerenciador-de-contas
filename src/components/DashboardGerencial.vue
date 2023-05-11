@@ -11,6 +11,7 @@
 <script>
 import HeaderDashboard from "@/components/shared/headerDashboard.vue";
 import BoxBase from "@/components/shared/box-base.vue";
+import FormularioDeRegistro from "@/components/shared/formulario-de-registro.vue";
 import Calculadora from "@/components/shared/calculadora.vue";
 
 export default {
