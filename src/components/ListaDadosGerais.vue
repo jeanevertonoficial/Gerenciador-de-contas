@@ -3,19 +3,17 @@
     <header-dashboard  :titulo_centro="titulo_central"/>
   </div>
   <div class="container-main">
-    <calculadora/>
-    <box-base :titulo_cartao="titulo_cartao" :titulo_boleto="titulo_boleto"/>
+    <card-lista/>
   </div>
 </template>
 
 <script>
 import HeaderDashboard from "@/components/shared/headerDashboard.vue";
-import BoxBase from "@/components/shared/box-base.vue";
-import Calculadora from "@/components/shared/calculadora.vue";
+import CardLista from "@/components/shared/card-lista";
 
 export default {
-  name: "DashboardGerencial",
-  components: { Calculadora, BoxBase, HeaderDashboard },
+  name: "ListaDadosGerais",
+  components: {CardLista, HeaderDashboard },
   data () {
     return {
       titulo_central: "VIVA SEMPRE ORGANIZADO",

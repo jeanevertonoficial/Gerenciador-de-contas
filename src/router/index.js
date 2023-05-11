@@ -8,6 +8,11 @@ const routes = [
     component: () => import("../components/LoginAutomatico.vue"),
   },
   {
+    path: "/lista-dados-gerais",
+    name: "lista",
+    component: () => import("../components/ListaDadosGerais.vue"),
+  },
+  {
     path: "/",
     name: "dashboard",
     component: () => import("../components/DashboardGerencial.vue"),
