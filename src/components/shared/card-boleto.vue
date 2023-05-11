@@ -3,7 +3,7 @@
     <span class="prev" @click="scrollCarousel(-1)">&lt;</span>
     <div class="card" v-for="(dados, index) in dadosSalvos" :key="index" v-show="dados.tipo === 'boleto'">
       <div class="card-img">
-        <img src="/images/boleto-vetor.png">
+        <img src="/images/cartao-vertor.png">
       </div>
       <div class="card-desc">
         <p class="titulo">{{ dados.titulo }}</p>
@@ -11,9 +11,15 @@
           <img src="/images/cartoes-com-cifrao.png" width="16" alt="icone valor">
           {{ formatCurrency(dados.valor) }}
         </p>
-        <div class="botoes-cards">
-          <div @click="excluirDado(dados.id, dados.valor)"><img width="16" src="/images/excluir-padrao.png"></div>
-          <div @click="openModal(dados)"><img width="16" src="/images/editar.png"></div>
+        <div class="overlay">
+          <div class="botoes-cards">
+            <div @click="excluirDado(dados.id, dados.valor)">
+              <img class="btn-excluir" width="16" src="/images/excluir.png" title="excluir">
+            </div>
+            <div class="btn-editar" @click="openModal(dados)">
+              <img width="16" src="/images/editar-branco.png" title="editar informação">
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -115,3 +121,33 @@ export default {
   }
 };
 </script>
+<style scoped>
+.card-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #FFFFFF;
+  border: 1px solid #E9E9E9;
+  box-shadow: 2px -6px 20px 0px rgb(0 0 0 / 10%);
+  border-radius: 10px 10px 0px 0px;
+}
+
+.overlay {
+  position: absolute;
+  top: 100%;
+  bottom: 100%;
+  width: 100%;
+  height: 100%;
+  background-color: #a929ffed;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.card{
+  overflow: hidden;
+}
+
+.card:hover .overlay {
+  top: 0;
+}
+</style>

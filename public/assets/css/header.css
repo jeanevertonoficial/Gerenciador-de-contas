@@ -1,4 +1,3 @@
-
 header {
     width: 70%;
     display: flex;
@@ -48,8 +47,53 @@ header {
     background: aliceblue;
     border-radius: 25px;
     color: #444;
+    cursor: pointer;
 }
 .login_info p {
     margin-left: 5px;
     margin-right: 10px;
+}
+
+.burger-menu {
+    right: 15px;
+    position: relative;
+}
+img.menu {
+    cursor: pointer;
+    width: 24px;
+}
+span.span-manu {
+    position: absolute;
+    top: 22px;
+    background: white;
+    right: 0;
+    width: 220px;
+    max-width: 220px;
+    border-radius: 4px;
+    box-shadow: -10px 10px 19px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+}
+
+span.span-manu ul {
+    padding: inherit;
+}
+span.span-manu li {
+    display: flex;
+    flex-direction: column;
+    text-transform: capitalize;
+    height: 30px;
+    border-bottom: 1px solid #4616ac26;
+    margin: 0 15px;
+    margin-bottom: 10px;
+}
+
+span.span-manu a {
+    text-decoration: none;
+    border-bottom: 1px solid #4616ac2e;
+}
+
+.header-logo {
+    display: flex;
+    width: 65px;
+    justify-content: center;
 }

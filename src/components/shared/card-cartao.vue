@@ -11,9 +11,15 @@
           <img src="/images/cartoes-com-cifrao.png" width="16" alt="icone valor">
           {{ formatCurrency(dados.valor) }}
         </p>
-        <div class="botoes-cards">
-          <div @click="excluirDado(dados.id, dados.valor)"><img width="16" src="/images/excluir-padrao.png"></div>
-          <div @click="openModal(dados)"><img width="16" src="/images/editar.png"></div>
+        <div class="overlay">
+          <div class="botoes-cards">
+            <div @click="excluirDado(dados.id, dados.valor)">
+              <img class="btn-excluir" width="16" src="/images/excluir.png" title="excluir">
+            </div>
+            <div class="btn-editar" @click="openModal(dados)">
+              <img width="16" src="/images/editar-branco.png" title="editar informação">
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -88,7 +94,8 @@ export default {
             console.log(response.data.message)
             alert(response.data.message)
           })
-          .catch((error) => { console.log(error.data.message)
+          .catch((error) => {
+            console.log(error.data.message)
           })
 
       // this.atualizar();
@@ -118,3 +125,33 @@ export default {
   },
 };
 </script>
+<style scoped>
+.card-img {
+  display: flex;
+  transform: rotate(90deg);
+  width: 85px;
+  align-items: center;
+  position: relative;
+  left: 20px;
+  top: 5px;
+}
+
+.overlay {
+  position: absolute;
+  top: 100%;
+  bottom: 100%;
+  width: 100%;
+  height: 100%;
+  background-color: #a929ffed;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.card{
+  overflow: hidden;
+}
+
+.card:hover .overlay {
+  top: 0;
+}
+</style>
