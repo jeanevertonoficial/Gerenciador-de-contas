@@ -1,5 +1,5 @@
 <template>
-  <div class="selecionar-meses" @scroll="scrollHandler">
+  <div class="selecionar-meses">
     <div class="meses">
       <label class="label-busca" for="meses">MÊS</label>
       <select id="meses" @change="buscarDados()">
@@ -41,6 +41,12 @@
         <select name="ano" id="ano" @change="buscarDados()">
           <option value="2023">2023</option>
         </select>
+      </div>
+    </div>
+    <div class="selecionar-ano">
+      <div class="total">
+        <label class="label-busca">VALOR TOTAL</label>
+        <span class="valor-total">{{ formatCurrency(valorTotal) }}</span>
       </div>
     </div>
   </div>
@@ -92,6 +98,7 @@ export default {
   data() {
     return {
       dadosSalvos: [],
+      valorTotal: 0,
       dadosFiltrados: [],
       imagens: {
         'nubank': '/images/nu.png',
@@ -221,10 +228,17 @@ export default {
                   const dataFim = new Date(ano, mes, fim);
                   return dataCriacao.getTime() >= dataInicio.getTime() && dataCriacao.getTime() <= dataFim.getTime();
                 });
+              } else {
+                this.dadosFiltrados = querySnapshot.data
               }
 
               return {...item, created_at: anoMes};
-            });
+            })
+
+            const valores = this.dadosFiltrados.map(({valor}) => parseFloat(valor));
+            const soma = valores.reduce((total, valor) => total + valor, 0);
+            this.valorTotal = soma;
+
           })
           .catch((error) => {
             console.log("Erro ao consultar documentos: ", error);
@@ -342,10 +356,10 @@ export default {
 }
 
 .selecionar-meses {
-  width: 510px;
+  width: 70%;
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: space-around;
   height: 80px;
   background: #ededed;
   border-radius: 4px;
@@ -385,10 +399,17 @@ label.label-busca {
   text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
 }
 
-.meses, .periodo, .ano {
+.meses, .periodo, .ano, .valor {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+span.valor-total {
+  margin-top: 5px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #424242;
 }
 
 .periodo-intervalo {

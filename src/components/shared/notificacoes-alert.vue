@@ -1,122 +1,110 @@
 <template>
-  <div @click="dismiss()" :class="['alert', `alert-${type}`]" v-show="show">
-    <i :class="['fa', `fa-${icon}`]" aria-hidden="true"></i>
-    <span @click="dismiss()" class="message">{{ message }}</span>
-    <button @click="dismiss()" class="close">X</button>
+  <div class="messege-container" :style="btnFecha" :class="estiloDaMensagem" role="alert">
+    <p>{{ msg }}</p>
+    <button class="btn-fecha" :style="btnFecha" @click="fecha">x</button>
   </div>
 </template>
 
 <script>
+
 export default {
+  // eslint-disable-next-line vue/multi-word-component-names
   name: "notificacoes-alert",
   props: {
-    type: {
-      type: String,
-      default: 'success'
-    },
-    icon: {
-      type: String,
-      default: 'check'
-    },
-    message: {
-      type: String,
-      required: true
-    },
-    dismissible: {
-      type: Boolean,
-      default: true
-    },
-    show: Boolean
+    msg: String,
+    estilo: {
+      required: false,
+      default: 'sucesso',
+      type: String
+    }
   },
   data() {
     return {
-      show: true
+      btnFecha: ''
     }
   },
-  methods: {
-    dismiss() {
-      this.show = !this.show
+  methods: {fecha() { return this.btnFecha = 'opacity: 0'; }},
+  computed: {
+    estiloDaMensagem: function () {
+      let estiloDaMensagem;
+      if (this.estilo == 'sucesso' || !this.estilo) {
+        estiloDaMensagem = 'success';
+      } else if (this.estilo == 'erro') {
+        estiloDaMensagem = 'danger';
+      }
+      return estiloDaMensagem;
     }
   }
 }
 </script>
 
 <style scoped>
-.alert button {
-  color: #444;
-  font-weight: bolder;
+
+.messege-container {
+  z-index: 15;
+  margin: auto;
+  position: absolute;
+  border-radius: 5px;
+  width: 100%;
+  padding: 15px;
+  text-align: center;
+  animation: mymove;
+  animation-duration: 0.7s;
+  transition: linear 0.7s;
+  display: flex;
+  justify-content: space-between;
 }
-.alert {
+
+.btn-fecha {
+  font-weight: bold;
+  background-color: transparent;
+  border: none;
   cursor: pointer;
-  position: fixed;
-  background-color: #fff;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  transition: transform .5s ease-in-out, opacity .5s ease-in-out;
-  animation: slide-up 0.5s ease-out forwards;
-  opacity: 1;
 }
-
-.alert.warning {
-  color: #ff9800;
-}
-
-.alert.success {
-  color: #4caf50;
-}
-
-.alert.error {
-  color: #f44336;
-}
-
-@keyframes slide-up {
+@keyframes mymove {
   from {
-    transform: translate(0, 0);
+    top: 0px;
+    opacity: 0;
   }
   to {
-    transform: translate(0, 100%);
+    opacity:1;
+    top: 10px;
   }
 }
 
-.alert-success {
-  background-color: #d4edda;
-  color: #155724;
-  border-color: #c3e6cb;
+@media (max-width: 551px) {
+  p {
+    width: 80%;
+  }
+  .btn-fecha {
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  @keyframes mymove {
+    from {
+      top: 0px;
+      opacity: 0;
+    }
+    to {
+      opacity:1;
+      top: 20px;
+    }
+  }
 }
 
-.alert-danger {
-  background-color: #f8d7da;
-  color: #721c24;
-  border-color: #f5c6cb;
+p {
+  margin: inherit;
+  padding: 0;
 }
 
-.alert-warning {
-  background-color: #fff3cd;
-  color: #856404;
-  border-color: #ffeeba;
+.sucesso {
+  background: #d3ecd9;
+  color: #025402;
 }
 
-.alert-info {
-  background-color: #d1ecf1;
-  color: #0c5460;
-  border-color: #bee5eb;
+.erro {
+  background: #f7d6d9;
+  color: rgb(112, 9, 9);
 }
 
-.fa {
-  margin-right: 8px;
-}
-
-.message {
-  flex: 1;
-}
-
-.close {
-  margin-left: 8px;
-  background: none;
-  border: none;
-  outline: none;
-  cursor: pointer;
-}
 </style>

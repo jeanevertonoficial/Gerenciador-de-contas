@@ -39,7 +39,6 @@
 </template>
 <script>
 import makeCalculatorDraggable from "@/model/draggable";
-import {auth} from "@/main";
 import axios from "axios"
 
 export default {
@@ -63,14 +62,6 @@ export default {
   methods: {
     salvar() {
       const {titulo, valor, tipo} = this.dados;
-      const data = {titulo, valor, tipo};
-      this.dadosSalvos.push(data);
-      localStorage.setItem("dados", JSON.stringify(this.dadosSalvos));
-      console.log(this.dadosSalvos)
-      auth.onAuthStateChanged((user) => {
-        this.user = user;
-      });
-
       axios.post(`http://127.0.0.1:8000/api/usuarios`, {
         titulo: titulo,
         valor: valor,
@@ -85,22 +76,22 @@ export default {
             console.log(error);
           });
 
-      if (!auth.currentUser) {
-        console.error("User is not authenticated");
-        alert("User is not authenticated")
-        return;
-      }
       this.somarSaldo();
       this.resetDados();
     },
     somarSaldo() {
-      const valores = this.dadosSalvos.map(({valor}) => parseFloat(valor));
-      console.log('Valores: ' + valores)
-      const soma = valores.reduce((total, valor) => total + valor, 0);
-      console.log('Soma:' + soma)
-      this.valorTotal = soma;
+      axios.get(`http://127.0.0.1:8000/api/usuarios/dados/jeanever39@gmail.com`)
+          .then((querySnapshot) => {
+            this.dadosSalvos = querySnapshot.data
+            const valores = this.dadosSalvos.map(({valor}) => parseFloat(valor));
+            const soma = valores.reduce((total, valor) => total + valor, 0);
+            this.valorTotal = soma;
+          })
+          .catch((error) => {
+            console.log("Erro ao consultar documentos: ", error);
+            alert("Erro ao consultar documentos: ", error);
+          });
 
-      localStorage.setItem("valorTotal", this.valorTotal);
     },
     resetDados() {
       this.dados.tipo = "";
@@ -112,6 +103,7 @@ export default {
     }
   },
   mounted() {
+    this.somarSaldo()
     makeCalculatorDraggable(this.$refs.formulario)
     this.valorTotal = parseFloat(localStorage.getItem("valorTotal")) || 0;
   },

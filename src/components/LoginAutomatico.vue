@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <notificacoesAlert :msg="msg" v-show="msg" :class="estilo"/>
     <div class="container-corpo">
       <div class="texto-info">
         <p>APROVEITE A MELHOR E MAIS <strong>SIMPLIFICADA</strong> <br>
@@ -46,7 +47,6 @@
           </div>
         </form>
       </div>
-      <notificacoes-alert v-show="alerta" :message="notificacao.descricao" :type="notificacao.tipo" :icon="notificacao.icone"></notificacoes-alert>
       <div class="rodape-login">
         <router-link to="/login" class="criar none" @click="voltar">Entrar</router-link>
         <p class="by-descricao">by vida sempre organizado</p>
@@ -56,7 +56,6 @@
 </template>
 
 <script>
-import {ref} from "vue";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -65,22 +64,18 @@ import {
 } from "firebase/auth";
 import {auth} from "@/main";
 import router from "@/router";
-import notificacoesAlert from "@/components/shared/notificacoes-alert.vue";
+import notificacoesAlert from "@/components/shared/notificacoes-alert";
 
 export default {
   name: "LoginAutomatico",
-  components:{ notificacoesAlert },
+  components: {notificacoesAlert},
   data() {
     return {
+      msg: null,
+      estilo: null,
       email: "",
       password: "",
       connection: null,
-      alerta: false,
-      notificacao: {
-        descricao: "",
-        icone: "",
-        tipo: "",
-      },
     };
   },
   methods: {
@@ -88,28 +83,19 @@ export default {
       createUserWithEmailAndPassword(auth, this.email, this.password)
           .then((response) => {
             console.log("Novo Usuário Criado: " + response.user.email);
-            this.notificacao.descricao = "Login criado com sucesso";
-            this.notificacao.icone = "check";
-            this.notificacao.tipo = "success";
-            //Salvar o e-mail do usuário no banco de dados MySQL
-            // const emailValue = response.user.email;
-            // const sql = `INSERT INTO cliente (email) VALUES (?)`;
-            // const values = ["", emailValue];
-            // this.connection.query(sql, values, (error, results, fields) => {
-            //   if (error) {
-            //     console.error(error);
-            //   } else {
-            //     alert("E-mail do usuário salvo no banco de dados MySQL");
-            //     console.log("E-mail do usuário salvo no banco de dados MySQL");
-            //   }
-            // });
-
-            router.push({ name: "dashboard" });
+            this.mensagem(
+                'sucesso',
+                'LoginLogin realiza com sucesso.',
+                null,
+                false)
+            router.push({name: "dashboard"});
           })
           .catch((error) => {
-            this.notificacao.descricao = "E-email ou senha incorreto";
-            this.notificacao.icone = "danger";
-            this.notificacao.tipo = "danger";
+            this.mensagem(
+                'erro',
+                'E-email ou senha incorreto.',
+                null,
+                false)
             console.error(error);
           });
     },
@@ -138,31 +124,42 @@ export default {
       });
     },
     loginWithEmail() {
-      this.alerta = false;
       signInWithEmailAndPassword(auth, this.email, this.password)
           .then((response) => {
-            this.alerta = true
-            this.notificacao.descricao = "Logado com sucesso";
-            this.notificacao.icone = "check";
-            this.notificacao.tipo = "success";
-            router.push({ name: "dashboard" });
+            this.mensagem(
+                'sucesso',
+                'Login realiza com sucesso.',
+                null,
+                false)
+            router.push({name: "dashboard"});
           })
           .catch((error) => {
-            this.alerta = true
-            this.notificacao.descricao = "E-email não cadastrado";
-            this.notificacao.icone = "danger";
-            this.notificacao.tipo = "danger";
             console.error(error.message);
+            this.mensagem(
+                'erro',
+                'Falha ao tentar Logar verifique o email e senha.',
+                null,
+                false)
+
+            this.destroyMyComponent()
           });
     },
+    mensagem(estilo, texto_msg, tempo_msg) {
+      this.estilo = estilo;
+      this.msg = texto_msg;
+      this.tempo_msg = (tempo_msg == 0 || tempo_msg == null) ? this.tempo_msg = 3000 : this.tempo_msg = tempo_msg;
+      setTimeout(() => {
+        this.msg = false
+      }, this.tempo_msg);
+    },
+    destroyMyComponent() {
+      const myComponent = this.$refs.notificacoesAlert;
+      if (myComponent) {
+        myComponent.$destroy();
+        this.$refs.notificacoesAlert = null;
+      }
+    }
+
   },
-  // mounted() {
-  //   this.connection = mysql.createConnection({
-  //     host: process.env.VUE_APP_DATABASE_ROST,
-  //     user: process.env.VUE_APP_DATABASE_USERNAME,
-  //     password: process.env.VUE_APP_DATABASE_PASSWORD,
-  //     database: process.env.VUE_APP_DATABASE_DBNAME,
-  //   });
-  // },
 }
 </script>
