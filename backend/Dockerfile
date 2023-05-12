@@ -1,40 +1,46 @@
 # Base image
 FROM php:8.1-fpm
 
-# Install system dependencies
+
+# Instala dependências
 RUN apt-get update && apt-get install -y \
     git \
     curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
     zip \
     unzip
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo_mysql
+# Limpa o cache do apt
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Composer
+# Instala as extensões do PHP necessárias
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+
+# Instala o composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Set working directory
+# Cria o diretório de trabalho da aplicação
 WORKDIR /var/www/html
 
-# Copy composer.json and composer.lock
-COPY ./composer.json ./composer.lock /var/www/html/
+# Copia os arquivos da aplicação para o contêiner
+COPY . .
 
-# Install project dependencies
-RUN composer install --no-scripts --no-autoloader
+# Instala as dependências do Laravel
+RUN composer install --no-dev
 
-# Copy the rest of the application
-COPY . /var/www/html/
+# Copia o arquivo de configuração do Laravel
+COPY .env.example .env
 
-# Generate autoload files and optimize Laravel
-RUN composer dump-autoload --optimize
+# Gera a chave de criptografia do Laravel
+RUN php artisan key:generate
 
-# Expose port 8000 and start PHP-FPM server
-EXPOSE 8000
-CMD ["php-fpm"]
+# Executa as migrations do Laravel
+RUN php artisan migrate
 
-# Build command
-# docker build -t myapp_backend .
+# Expõe a porta 9000
+EXPOSE 9000
 
-# Run command
-# docker run --rm -it -v $(pwd):/var/www/html -p 9000:9000 --name myapp_backend myapp_backend
+# Inicia o servidor do PHP
+CMD ["php", "artisan", "serve", "--host=0.0.0.0"]

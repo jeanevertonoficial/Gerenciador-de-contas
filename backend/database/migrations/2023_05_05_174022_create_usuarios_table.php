@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('tipo');
             $table->unsignedBigInteger('cliente_id');
             $table->foreign('cliente_id')->references('id')->on('clientes');
-            $table->timestamps();
         });
     }
 

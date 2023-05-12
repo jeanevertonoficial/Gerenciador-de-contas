@@ -32,6 +32,7 @@
 import ModalOpen from "@/components/shared/modalOpen.vue";
 import {auth} from "@/main";
 import axios from "axios";
+import rotaApi from "@/controllers/rota-api";
 
 export default {
   name: "cardBoleto",
@@ -40,18 +41,19 @@ export default {
     return {
       dadosSalvos: [],
       modalData: null,
-      modalOpen: false
+      modalOpen: false,
+      rota: new rotaApi().rota_api
     };
   },
   methods: {
     getDados() {
-      axios.get(`http://127.0.0.1:8000/api/usuarios/dados/jeanever39@gmail.com`)
+      axios.get(`${this.rota}/dados/jeanever39@gmail.com`)
           .then((querySnapshot) => {
             console.log(querySnapshot.data)
             this.dadosSalvos = querySnapshot.data
           })
           .catch((error) => {
-            console.log("Erro ao consultar documentos: ", error);
+            console.log("Erro ao consultar documentos: ", error.message);
           });
     },
     getDadosSalvos() {
@@ -86,7 +88,7 @@ export default {
       this.dadosSalvos.splice(id, 1);
       localStorage.setItem("dados", JSON.stringify(this.dadosSalvos));
 
-      axios.delete('http://127.0.0.1:8000/api/usuarios/deletar/' + id)
+      axios.delete(`${this.rota}/deletar/` + id)
           .then((response) => {
             console.log(response.data.message)
             alert(response.data.message)

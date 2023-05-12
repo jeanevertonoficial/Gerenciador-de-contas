@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cliente;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UsuarioController extends Controller
 {
@@ -41,6 +43,7 @@ class UsuarioController extends Controller
             // salvar email na tabela clientes
             $cliente = new Cliente();
             $cliente->email = $request->email;
+            $cliente->senha = Hash::make($request->senha);
             $cliente->save();
 
             // salvar dados na tabela usuarios
@@ -58,6 +61,29 @@ class UsuarioController extends Controller
             return response()->json(['message' => 'Erro ao tentar cadastrar'], 400);
         }
 
+    }
+
+    public function criarCliente(Request $request): JsonResponse
+    {
+        $cliente = new Cliente();
+
+        $cliente->email = $request->email;
+        $cliente->senha = Hash::make($request->senha);
+
+        $cliente->save();
+
+        return response()->json($cliente);
+    }
+
+    public function verificarSenha(Request $request): JsonResponse
+    {
+        $cliente = Cliente::where('email', $request->email)->first();
+
+        if (!$cliente || !Hash::check($request->senha, $cliente->senha)) {
+            return response()->json(['message' => 'Email ou senha inválidos.'], 401);
+        }
+
+        return response()->json($cliente);
     }
 
     /**

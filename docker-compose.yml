@@ -8,6 +8,7 @@ services:
       - .:/app
     depends_on:
       - backend
+    command: npm run serve --host=0.0.0.0 --port=8081
   backend:
     build:
       context: ./backend
@@ -18,6 +19,7 @@ services:
       - ./backend:/var/www/html
     depends_on:
       - db
+    command: php artisan serve --host=0.0.0.0 --port=9000
   db:
     image: mysql:latest
     ports:
@@ -27,5 +29,3 @@ services:
       - MYSQL_ROOT_PASSWORD=Jean9882
       - MYSQL_DATABASE=gerenciador_de_contas
       - MYSQL_PASSWORD=Jean9882
-    volumes:
-      - ./db:/var/lib/mysql

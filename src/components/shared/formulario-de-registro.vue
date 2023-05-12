@@ -22,8 +22,19 @@
           <input type="text" v-model.trim="dados.titulo" placeholder="DIGITE AQUI O TITULO">
         </div>
         <div class="check-tipo valor">
+          <h1>MÊS REFENTE</h1>
+          <select id="meses" v-model.trim="dados.mes_referente">
+            <option v-for="mes in meses"
+                    :key="mes.valor"
+                    :selected="mes.selected"
+                    :value="mes.valor">
+              {{ mes.mes }}
+            </option>
+          </select>
+        </div>
+        <div class="check-tipo valor">
           <h1>VALOR A PAGAR</h1>
-          <input type="text" v-model.trim="dados.valor" placeholder="DIGITE AQUI O VALOR A PAGAR">
+          <input type="text" v-model.trim="dados.valor" placeholder="DIGITE O VALOR">
         </div>
         <button type="submit" class="btn-salvar">SALVAR</button>
       </form>
@@ -40,6 +51,7 @@
 <script>
 import makeCalculatorDraggable from "@/model/draggable";
 import axios from "axios"
+import rotaApi from "@/controllers/rota-api";
 
 export default {
   name: "formulario-de-registro",
@@ -49,9 +61,25 @@ export default {
         tipo: "",
         valor: "",
         titulo: "",
+        mes_referente: "",
       },
       dadosSalvos: [],
       valorTotal: 0,
+      rota: new rotaApi().rota_api,
+      meses: [
+        {mes: 'JANEIRO', valor: '00', selected: "selected"},
+        {mes: 'FEVEREIRO', valor: '01'},
+        {mes: 'MARÇO', valor: '02'},
+        {mes: 'ABRIL', valor: '03'},
+        {mes: 'MAIO', valor: '04'},
+        {mes: 'JUNHO', valor: '05'},
+        {mes: 'JULHO', valor: '06'},
+        {mes: 'AGOSTO', valor: '07'},
+        {mes: 'SETEMBRO', valor: '08'},
+        {mes: 'OUTUBRO', valor: '9'},
+        {mes: 'NOVEMBRO', valor: '10'},
+        {mes: 'DEZEMBRO', valor: '11'}
+      ],
     };
   },
   computed: {
@@ -61,11 +89,12 @@ export default {
   },
   methods: {
     salvar() {
-      const {titulo, valor, tipo} = this.dados;
-      axios.post(`http://127.0.0.1:8000/api/usuarios`, {
+      const {titulo, valor, tipo, mes_referente} = this.dados;
+      axios.post(`${this.rota}`, {
         titulo: titulo,
         valor: valor,
         tipo: tipo,
+        mes_referente: mes_referente,
         email: 'jeanever39@gmail.com'
       })
           .then(response => {
@@ -73,14 +102,14 @@ export default {
             alert(response.data.message)
           })
           .catch(error => {
-            console.log(error);
+            console.log(error.message);
           });
 
       this.somarSaldo();
       this.resetDados();
     },
     somarSaldo() {
-      axios.get(`http://127.0.0.1:8000/api/usuarios/dados/jeanever39@gmail.com`)
+      axios.get(`${this.rota}/dados/jeanever39@gmail.com`)
           .then((querySnapshot) => {
             this.dadosSalvos = querySnapshot.data
             const valores = this.dadosSalvos.map(({valor}) => parseFloat(valor));
@@ -89,7 +118,7 @@ export default {
           })
           .catch((error) => {
             console.log("Erro ao consultar documentos: ", error);
-            alert("Erro ao consultar documentos: ", error);
+            alert("Erro ao consultar documentos: ", error.message);
           });
 
     },

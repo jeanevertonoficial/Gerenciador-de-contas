@@ -31,6 +31,7 @@
 <script>
 import ModalOpen from "@/components/shared/modalOpen.vue";
 import axios from "axios";
+import rotaApi from "@/controllers/rota-api";
 
 export default {
   name: "cardCartao",
@@ -52,17 +53,18 @@ export default {
         'cartoes': '/images/cartoes.jpeg',
       },
       imagensTipo: '/images/cartoes.jpeg',
+      rota: new rotaApi().rota_api
     };
   },
   methods: {
     getDados() {
-      axios.get(`http://127.0.0.1:8000/api/usuarios/dados/jeanever39@gmail.com`)
+      axios.get(`${this.rota}/dados/jeanever39@gmail.com`)
           .then((querySnapshot) => {
             console.log(querySnapshot.data)
             this.dadosSalvos = querySnapshot.data
           })
           .catch((error) => {
-            console.log("Erro ao consultar documentos: ", error);
+            console.log("Erro ao consultar documentos: ", error.message);
           });
     },
     tipoImagem(dados) {
@@ -89,7 +91,7 @@ export default {
       this.dadosSalvos.splice(id, 1);
       localStorage.setItem("dados", JSON.stringify(this.dadosSalvos));
 
-      axios.delete('http://127.0.0.1:8000/api/usuarios/deletar/' + id)
+      axios.delete(`${this.rota}/deletar/` + id)
           .then((response) => {
             console.log(response.data.message)
             alert(response.data.message)
@@ -97,8 +99,6 @@ export default {
           .catch((error) => {
             console.log(error.data.message)
           })
-
-      // this.atualizar();
     },
     openModal(dados) {
       this.modalData = dados;

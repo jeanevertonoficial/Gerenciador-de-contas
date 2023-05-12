@@ -92,6 +92,7 @@
 
 <script>
 import axios from "axios";
+import rotaApi from "@/controllers/rota-api";
 
 export default {
   name: "card-lista",
@@ -190,6 +191,7 @@ export default {
         {periodo: '30', valor: '30'},
         {periodo: '31', valor: '31', selected: 'selected'},
       ],
+      rota: new rotaApi().rota_api
     }
   },
   methods: {
@@ -197,7 +199,7 @@ export default {
       return value.toLocaleString("pt-BR", {style: "currency", currency: "BRL"});
     },
     exluirDados(id) {
-      axios.delete('http://127.0.0.1:8000/api/usuarios/deletar/' + id)
+      axios.delete(`${this.rota}/deletar/` + id)
           .then((response) => {
             console.log(response.data.message)
             alert(response.data.message)
@@ -213,7 +215,7 @@ export default {
       return chaveImagem ? this.imagens[chaveImagem] : this.imagensTipo;
     },
     getDados(mes, inicio, fim, ano) {
-      axios.get(`http://127.0.0.1:8000/api/usuarios/dados/jeanever39@gmail.com`)
+      axios.get(`${this.rota}/dados/jeanever39@gmail.com`)
           .then((querySnapshot) => {
             this.dadosSalvos = querySnapshot.data.map(item => {
               const dataCriacao = new Date(item.created_at);
@@ -267,7 +269,7 @@ export default {
       const pageHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
       const scrollPercentage = (scrollPosition / pageHeight) * 100;
 
-      if (scrollPercentage >= 70) {
+      if (scrollPercentage >= 5) {
         element.classList.add('selecionar-meses-scroll');
       } else {
         element.classList.remove('selecionar-meses-scroll');
@@ -306,7 +308,7 @@ export default {
   width: 100%;
   height: 100%;
   background-color: var(--COLOR-BASE-SEGUNDARIA);
-  transition: all 0.3s ease;
+  transition: all 0.5s cubic-bezier(1,-0.04,0,.12);
   z-index: 1;
 }
 

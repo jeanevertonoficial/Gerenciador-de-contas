@@ -2,7 +2,7 @@
     position: absolute;
     width: 100%;
     max-width: 320px;
-    height: 441.62px;
+    height: 500px;
     left: 60%;
     top: 16%;
     cursor: grab;
@@ -92,7 +92,7 @@ input[type="radio"] {
     width: 100%;
     max-width: 320px;
     height: 53.48px;
-    top: 390px;
+    top: 480px;
     display: flex;
     background: var(--COLOR-BASE-TEXTO);
     border-radius: 0px 0px 21.5633px 21.5633px;
@@ -123,7 +123,7 @@ input[type="radio"] {
     margin-left: -35px;
 }
 
-.check-tipo input {
+.check-tipo input, .check-tipo select {
     width: 228.57px;
     height: 27.6px;
     background: var(--COLOR-BASE-TEXTO);
@@ -132,7 +132,6 @@ input[type="radio"] {
     margin: auto;
     text-align: center;
     border: none;
-
     text-transform: uppercase;
     font-weight: 700;
     font-size: 8.62534px;
@@ -156,7 +155,7 @@ input[type="radio"] {
     justify-content: center;
     transition: 0.5s;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 40px;
 }
 
 .btn-salvar:hover {
@@ -172,8 +171,8 @@ input[type="radio"] {
     margin-top: 15px;
 }
 
-.valor input {
-    font-size: 18px;
+.valor input, .check-tipo select {
+    font-size: 14px;
     color: var(--COLOR-VALOR-TOTAL) !important;
 }
 
