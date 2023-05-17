@@ -24,7 +24,7 @@
             </option>
           </select>
           <p>INTERVALO</p>
-          <select name="periodo-fim" id="periodo-fim" @change="buscarDados()">
+          <select name="periodo-fim" id="periodo-fim">
             <option v-for="periodo_id in periodo_fim"
                     :key="periodo_id.valor"
                     :selected="periodo_id.selected"
@@ -35,7 +35,15 @@
         </div>
       </div>
     </div>
-    <div class="selecionar-ano">
+    <div class="selecionar-ano" v-show="mostrarDivAposFiltro">
+      <label class="label-busca" for="valorFiltrado">BUSCAR POR VALOR</label>
+      <div class="slider-container">
+        <input type="range" :min="minValue" id="valorFiltrado" :max="maxValue" @change="buscarDados()" :step="stepValue"
+               v-model="selectedValue" class="slider">
+        <span class="slider-value">{{ selectedValue }}</span>
+      </div>
+    </div>
+    <div class="selecionar-ano valorTotal">
       <div class="ano">
         <label class="label-busca" for="ano">ANO</label>
         <select name="ano" id="ano" @change="buscarDados()">
@@ -191,7 +199,13 @@ export default {
         {periodo: '30', valor: '30'},
         {periodo: '31', valor: '31', selected: 'selected'},
       ],
-      rota: new rotaApi().rota_api
+      rota: new rotaApi().rota_api,
+      minValue: 0,
+      maxValue: 100,
+      stepValue: 1,
+      selectedValue: 50,
+      items: [], // Valores vindos da API,
+      mostrarDivAposFiltro: false
     }
   },
   methods: {
@@ -220,26 +234,42 @@ export default {
             this.dadosSalvos = querySnapshot.data.map(item => {
               const dataCriacao = new Date(item.created_at);
               const anoMes = dataCriacao.toLocaleDateString('pt-BR', {year: 'numeric', month: '2-digit'});
-
-              this.dadosFiltrados = querySnapshot.data
-
-              if (mes != null && mes !== "" && inicio != null && inicio !== "" && fim != null && fim !== "" && ano != null && ano !== "") {
-                this.dadosFiltrados = querySnapshot.data.filter(registro => {
-                  const dataCriacao = new Date(registro.created_at);
-                  const dataInicio = new Date(ano, mes, inicio);
-                  const dataFim = new Date(ano, mes, fim);
-                  return dataCriacao.getTime() >= dataInicio.getTime() && dataCriacao.getTime() <= dataFim.getTime();
-                });
-              } else {
-                this.dadosFiltrados = querySnapshot.data
-              }
-
               return {...item, created_at: anoMes};
-            })
+            });
 
-            const valores = this.dadosFiltrados.map(({valor}) => parseFloat(valor));
-            const soma = valores.reduce((total, valor) => total + valor, 0);
-            this.valorTotal = soma;
+            const valoresGerais = this.dadosSalvos.map(({valor}) => parseFloat(valor));
+            this.minValue = Math.min(...valoresGerais);
+            this.maxValue = Math.max(...valoresGerais);
+            this.dadosFiltrados = this.dadosSalvos;
+
+            if (mes != null && mes !== "" &&
+                inicio != null && inicio !== "" &&
+                fim != null && fim !== "" &&
+                ano != null && ano !== ""
+            ) {
+              const dataInicio = new Date(ano, mes, inicio);
+              const dataFim = new Date(ano, mes, fim);
+
+              this.dadosFiltrados = querySnapshot.data.filter(registro => {
+                const dataCriacao = new Date(registro.created_at);
+                const mesReferente = registro.mes_referente;
+
+                return (
+                    dataCriacao.getTime() >= dataInicio.getTime() &&
+                    dataCriacao.getTime() <= dataFim.getTime() &&
+                    parseFloat(registro.valor) >= this.selectedValue ||
+                    (mesReferente === "" || mesReferente === mes)
+                );
+              });
+            } else {
+              this.dadosFiltrados = querySnapshot.data
+            }
+
+            const valoresFiltrados = this.dadosFiltrados.map(({valor}) => parseFloat(valor));
+            this.minValue = Math.min(this.minValue, ...valoresFiltrados);
+            this.maxValue = Math.max(this.maxValue, ...valoresFiltrados);
+
+            this.valorTotal = valoresFiltrados.reduce((total, valor) => total + valor, 0);
 
           })
           .catch((error) => {
@@ -261,6 +291,7 @@ export default {
       const fim = document.getElementById('periodo-fim').value; // pega o valor selecionado no dropdown de fim do período
       const ano = document.getElementById('ano').value; // pega o valor selecionado no dropdown de ano
 
+      this.mostrarDivAposFiltro = true;
       this.getDados(mes, inicio, fim, ano);
     },
     handleScroll() {
@@ -269,11 +300,14 @@ export default {
       const pageHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
       const scrollPercentage = (scrollPosition / pageHeight) * 100;
 
-      if (scrollPercentage >= 5) {
-        element.classList.add('selecionar-meses-scroll');
-      } else {
+      if (element) {
         element.classList.remove('selecionar-meses-scroll');
       }
+
+      if (scrollPercentage >= 5) {
+        element.classList.add('selecionar-meses-scroll');
+      }
+
     },
     beforeDestroy() {
       window.removeEventListener('scroll', this.handleScroll);
@@ -308,7 +342,7 @@ export default {
   width: 100%;
   height: 100%;
   background-color: var(--COLOR-BASE-SEGUNDARIA);
-  transition: all 0.5s cubic-bezier(1,-0.04,0,.12);
+  transition: all 0.5s cubic-bezier(1, -0.04, 0, .12);
   z-index: 1;
 }
 
@@ -541,7 +575,9 @@ p.p-valor {
 .base-titulo-info {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: flex-end;
+  position: relative;
+  top: 20px;
 }
 
 .titulo-info {
@@ -573,5 +609,51 @@ p.p-valor {
     margin-top: 30px;
     align-items: center
   }
+}
+
+:root {
+  --slider-min: 0;
+  --slider-max: 100;
+}
+
+.slider-container {
+  display: flex;
+  align-items: center;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 3px;
+  background: #ccc;
+  outline: none;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--COLOR-BASE-PRIMARIA);
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--COLOR-BASE-PRIMARIA);
+  cursor: pointer;
+}
+
+.slider-value {
+  margin-left: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--COLOR-VALOR-TOTAL);
 }
 </style>

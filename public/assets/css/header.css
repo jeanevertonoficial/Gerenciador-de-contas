@@ -21,7 +21,9 @@ header {
     font-size: small;
     font-weight: 900;
 }
-
+.sair-mobile {
+    display: none;
+}
 .header-botao-logar {
     cursor: pointer;
     transition: 0.5s;

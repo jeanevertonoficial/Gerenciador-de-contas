@@ -5,7 +5,7 @@
         <div class="titulo_base">
           {{ titulo_cartao }}
         </div>
-        <CardCartao />
+        <CardCartao :dadosSalvos="dadosGerais" />
       </div>
     </div>
     <div class="box-base boletos" ref="box_boleto">
@@ -13,10 +13,10 @@
         <div class="titulo_base">
           {{ titulo_boleto }}
         </div>
-        <CardBoleto />
+        <CardBoleto :dadosSalvos="dadosGerais" />
       </div>
     </div>
-    <FormularioDeRegistro />
+    <FormularioDeRegistro :dadosSalvos="dadosGerais" />
   </div>
 </template>
 
@@ -29,7 +29,7 @@ import makeCalculatorDraggable from "@/model/draggable";
 export default {
   name: "BoxBase",
   components: { FormularioDeRegistro, CardBoleto, CardCartao },
-  props: ["titulo_cartao", "titulo_boleto"],
+  props: ["titulo_cartao", "titulo_boleto", "dadosGerais"],
   mounted() {
     makeCalculatorDraggable(this.$refs.box_cartao)
     makeCalculatorDraggable(this.$refs.box_boleto)

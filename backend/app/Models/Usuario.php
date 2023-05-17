@@ -14,6 +14,7 @@ class Usuario extends Model
         'valor',
         'tipo',
         'email',
+        'mes_referente'
     ];
 
     public function cliente()

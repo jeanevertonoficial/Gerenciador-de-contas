@@ -19,10 +19,13 @@
               <router-link to="/lista-dados-gerais">
                 <li>Todos Cadastrados</li>
               </router-link>
+              <router-link to="" class="sair-mobile">
+              <li @click="signOut">Sair</li>
+              </router-link>
             </ul>
         </span>
       </div>
-      <div class="header-logo">
+      <div class="header-logo persona">
         <img src="/images/icone-persona.png">
       </div>
       <div class="header-botao-logar">

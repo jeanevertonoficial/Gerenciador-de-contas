@@ -36,10 +36,10 @@ import rotaApi from "@/controllers/rota-api";
 export default {
   name: "cardCartao",
   components: {ModalOpen},
+  props:["dadosSalvos"],
   data() {
     return {
       user: null,
-      dadosSalvos: [],
       modalData: null,
       modalOpen: false,
       imagens: {
@@ -57,16 +57,6 @@ export default {
     };
   },
   methods: {
-    getDados() {
-      axios.get(`${this.rota}/dados/jeanever39@gmail.com`)
-          .then((querySnapshot) => {
-            console.log(querySnapshot.data)
-            this.dadosSalvos = querySnapshot.data
-          })
-          .catch((error) => {
-            console.log("Erro ao consultar documentos: ", error.message);
-          });
-    },
     tipoImagem(dados) {
       const chaveImagem = Object.keys(this.imagens).find(chave => dados.titulo.toLowerCase().includes(chave.toLowerCase()));
       return chaveImagem ? this.imagens[chaveImagem] : this.imagensTipo;
@@ -119,10 +109,7 @@ export default {
     atualizar() {
       location.reload()
     }
-  },
-  mounted() {
-    this.getDados();
-  },
+  }
 };
 </script>
 <style scoped>

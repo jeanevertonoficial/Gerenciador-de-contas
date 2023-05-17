@@ -36,7 +36,8 @@ class UsuarioController extends Controller
             'email' => 'required|email',
             'titulo' => 'required',
             'valor' => 'required|numeric',
-            'tipo' => 'required'
+            'tipo' => 'required',
+            'mes_referente' => 'required'
         ]);
 
         try {
@@ -52,6 +53,7 @@ class UsuarioController extends Controller
             $usuario->titulo = $request->titulo;
             $usuario->valor = $request->valor;
             $usuario->tipo = $request->tipo;
+            $usuario->mes_referente = $request->mes_referente;
             $usuario->cliente()->associate($cliente);
             $usuario->save();
 

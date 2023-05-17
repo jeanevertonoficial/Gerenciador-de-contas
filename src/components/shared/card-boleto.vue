@@ -37,37 +37,15 @@ import rotaApi from "@/controllers/rota-api";
 export default {
   name: "cardBoleto",
   components: {ModalOpen},
+  props:['dadosSalvos'],
   data() {
     return {
-      dadosSalvos: [],
       modalData: null,
       modalOpen: false,
       rota: new rotaApi().rota_api
     };
   },
   methods: {
-    getDados() {
-      axios.get(`${this.rota}/dados/jeanever39@gmail.com`)
-          .then((querySnapshot) => {
-            console.log(querySnapshot.data)
-            this.dadosSalvos = querySnapshot.data
-          })
-          .catch((error) => {
-            console.log("Erro ao consultar documentos: ", error.message);
-          });
-    },
-    getDadosSalvos() {
-      const dados = this.dadosSalvos;
-      console.log(dados)
-      if (dados) {
-        try {
-          const parsedData = JSON.parse(dados);
-          this.dadosSalvos = parsedData.filter(dado => dado.tipo === "boleto");
-        } catch (e) {
-          console.error("Erro ao parsear dados salvos:", e);
-        }
-      }
-    },
     formatCurrency(value) {
       return value.toLocaleString("pt-BR", {style: "currency", currency: "BRL"});
     },
@@ -118,9 +96,6 @@ export default {
       location.reload()
     }
   },
-  mounted() {
-    this.getDados();
-  }
 };
 </script>
 <style scoped>
