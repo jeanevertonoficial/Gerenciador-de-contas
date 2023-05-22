@@ -9,6 +9,12 @@
       {{ titulo_centro }}
     </div>
     <div class="header-logar">
+      <div class="busca-input" v-if="listaDados">
+        <div class="busca-div">
+          <input class="busca-input" id="busca_input" type="text" name="busca-texto" placeholder="Buscar">
+          <img class="busca-lupa" src="/images/icones/lupa.png">
+        </div>
+      </div>
       <div class="burger-menu">
         <img class="menu" src="/images/icones/menu-aberto.png">
         <span class="span-manu none">
@@ -45,10 +51,11 @@
 <script>
 import {signOut} from "firebase/auth";
 import {auth} from "@/main";
+import listaDadosGerais from "@/components/ListaDadosGerais.vue";
 
 export default {
   name: "headerDashboard",
-  props: ["titulo_centro"],
+  props: ["titulo_centro", "listaDados"],
   data() {
     return {
       userEmail: null,
@@ -91,4 +98,22 @@ export default {
   display: none;
 }
 
+input.busca-input {
+  height: 36px;
+  width: 256px;
+  border-radius: 25px;
+  border: none;
+  padding-left: 20px;
+}
+
+img.busca-lupa {
+  position: relative;
+  left: -3.5rem;
+  top: 7px;
+}
+
+.busca-input {
+  position: relative;
+  right: 15px;
+}
 </style>

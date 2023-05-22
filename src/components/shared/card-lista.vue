@@ -106,6 +106,7 @@ export default {
   name: "card-lista",
   data() {
     return {
+      listaDados: true,
       dadosSalvos: [],
       valorTotal: 0,
       dadosFiltrados: [],
@@ -253,12 +254,18 @@ export default {
               this.dadosFiltrados = querySnapshot.data.filter(registro => {
                 const dataCriacao = new Date(registro.created_at);
                 const mesReferente = registro.mes_referente;
+                const texto = document.getElementById('busca_input').value
+                console.log(texto)
+                const textoFiltrado = texto.toLowerCase().trim();
+                const textoRegistro = registro.texto.toLowerCase(); // Substitua "texto" pelo nome correto do campo que contém o texto no objeto "registro"
+
 
                 return (
                     dataCriacao.getTime() >= dataInicio.getTime() &&
                     dataCriacao.getTime() <= dataFim.getTime() &&
                     parseFloat(registro.valor) >= this.selectedValue ||
-                    (mesReferente === "" || mesReferente === mes)
+                    (mesReferente === "" || mesReferente === mes) ||
+                    textoRegistro.includes(textoFiltrado)
                 );
               });
             } else {
@@ -314,6 +321,8 @@ export default {
     }
   },
   mounted() {
+    // const texto = document.getElementById('busca_input').value
+    console.log(texto)
     window.addEventListener('scroll', this.handleScroll);
     this.getDados()
   }

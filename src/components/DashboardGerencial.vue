@@ -1,6 +1,6 @@
 <template>
   <div class="container-header">
-    <header-dashboard  :titulo_centro="titulo_central"/>
+    <header-dashboard  :titulo_centro="titulo_central" :listaDados="listaDados"/>
   </div>
   <div class="container-main">
     <calculadora/>
@@ -24,6 +24,7 @@ export default {
       titulo_cartao: "CARTÕES DE CRÉDITOS",
       titulo_boleto: "BOLETOS BANCÁRIOS",
       dadosGerais: [],
+      listaDados: false,
       rota: new rotaApi().rota_api,
     }
   },
