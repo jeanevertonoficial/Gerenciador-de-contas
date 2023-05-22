@@ -21,4 +21,4 @@ cd backend
 php artisan migrate
 
 # Abre a aplicação Vue.js no navegador padrão
-open http://localhost:8081
+open http://localhost:8081/#/
