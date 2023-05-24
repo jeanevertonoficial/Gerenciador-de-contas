@@ -11,7 +11,7 @@
     <div class="header-logar">
       <div class="busca-input" v-if="listaDados">
         <div class="busca-div">
-          <input class="busca-input" id="busca_input" type="text" name="busca-texto" placeholder="Buscar">
+          <input class="busca-input" id="busca_input" type="text" name="busca-texto" v-model="texto" @input="atualizarTexto" placeholder="Buscar">
           <img class="busca-lupa" src="/images/icones/lupa.png">
         </div>
       </div>
@@ -51,7 +51,6 @@
 <script>
 import {signOut} from "firebase/auth";
 import {auth} from "@/main";
-import listaDadosGerais from "@/components/ListaDadosGerais.vue";
 
 export default {
   name: "headerDashboard",
@@ -59,6 +58,7 @@ export default {
   data() {
     return {
       userEmail: null,
+      texto: ""
     }
   },
   created() {
@@ -73,6 +73,9 @@ export default {
     });
   },
   methods: {
+    atualizarTexto() {
+      this.$emit("texto-atualizado", this.texto);
+    },
     usuario() {
       auth.onAuthStateChanged((user) => {
         this.userEmail = user;

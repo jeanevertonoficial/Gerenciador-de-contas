@@ -1,5 +1,6 @@
 <template>
   <div class="selecionar-meses">
+    {{ textoFiltrado }}
     <div class="meses">
       <label class="label-busca" for="meses">MÊS</label>
       <select id="meses" @change="buscarDados()">
@@ -41,6 +42,10 @@
         <input type="range" :min="minValue" id="valorFiltrado" :max="maxValue" @change="buscarDados()" :step="stepValue"
                v-model="selectedValue" class="slider">
         <span class="slider-value">{{ selectedValue }}</span>
+      </div>
+      <div class="valores">
+        <span class="valorMinimo">De R$ {{ this.minValue }}</span>
+        <span class="valorMinimo">Até R$ {{ this.maxValue }}</span>
       </div>
     </div>
     <div class="selecionar-ano valorTotal">
@@ -104,8 +109,10 @@ import rotaApi from "@/controllers/rota-api";
 
 export default {
   name: "card-lista",
+  props: ["texto"],
   data() {
     return {
+      textoFiltrado: '',
       listaDados: true,
       dadosSalvos: [],
       valorTotal: 0,
@@ -201,8 +208,8 @@ export default {
         {periodo: '31', valor: '31', selected: 'selected'},
       ],
       rota: new rotaApi().rota_api,
-      minValue: 0,
-      maxValue: 100,
+      minValue: this.minValue,
+      maxValue: this.maxValue,
       stepValue: 1,
       selectedValue: 50,
       items: [], // Valores vindos da API,
@@ -229,14 +236,27 @@ export default {
       const chaveImagem = Object.keys(this.imagens).find(chave => dados.titulo.toLowerCase().includes(chave.toLowerCase()));
       return chaveImagem ? this.imagens[chaveImagem] : this.imagensTipo;
     },
-    getDados(mes, inicio, fim, ano) {
-      axios.get(`${this.rota}/dados/jeanever39@gmail.com`)
+    buscarDadosAPI() {
+      return axios.get(`${this.rota}/dados/jeanever39@gmail.com`)
           .then((querySnapshot) => {
-            this.dadosSalvos = querySnapshot.data.map(item => {
+            const dadosSalvos = querySnapshot.data.map((item) => {
               const dataCriacao = new Date(item.created_at);
-              const anoMes = dataCriacao.toLocaleDateString('pt-BR', {year: 'numeric', month: '2-digit'});
+              const anoMes = dataCriacao.toLocaleDateString("pt-BR", {year: "numeric", month: "2-digit"});
               return {...item, created_at: anoMes};
             });
+
+            return dadosSalvos;
+          })
+          .catch((error) => {
+            console.log("Erro ao consultar documentos: ", error);
+            return [];
+          });
+    },
+
+    getDados(mes, inicio, fim, ano) {
+      this.buscarDadosAPI()
+          .then((querySnapshot) => {
+            this.dadosSalvos = querySnapshot;
 
             const valoresGerais = this.dadosSalvos.map(({valor}) => parseFloat(valor));
             this.minValue = Math.min(...valoresGerais);
@@ -251,25 +271,19 @@ export default {
               const dataInicio = new Date(ano, mes, inicio);
               const dataFim = new Date(ano, mes, fim);
 
-              this.dadosFiltrados = querySnapshot.data.filter(registro => {
+              this.dadosFiltrados = querySnapshot.filter(registro => {
                 const dataCriacao = new Date(registro.created_at);
                 const mesReferente = registro.mes_referente;
-                const texto = document.getElementById('busca_input').value
-                console.log(texto)
-                const textoFiltrado = texto.toLowerCase().trim();
-                const textoRegistro = registro.texto.toLowerCase(); // Substitua "texto" pelo nome correto do campo que contém o texto no objeto "registro"
-
 
                 return (
                     dataCriacao.getTime() >= dataInicio.getTime() &&
                     dataCriacao.getTime() <= dataFim.getTime() &&
                     parseFloat(registro.valor) >= this.selectedValue ||
-                    (mesReferente === "" || mesReferente === mes) ||
-                    textoRegistro.includes(textoFiltrado)
+                    (mesReferente === "" || mesReferente === mes)
                 );
               });
             } else {
-              this.dadosFiltrados = querySnapshot.data
+              this.dadosFiltrados = querySnapshot
             }
 
             const valoresFiltrados = this.dadosFiltrados.map(({valor}) => parseFloat(valor));
@@ -321,15 +335,36 @@ export default {
     }
   },
   mounted() {
-    // const texto = document.getElementById('busca_input').value
-    console.log(texto)
     window.addEventListener('scroll', this.handleScroll);
     this.getDados()
+  },
+  computed: {
+    textoFiltrado() {
+      const textoFiltrado = this.texto.toLowerCase().trim();
+      this.buscarDadosAPI()
+          .then((response) => {
+            this.dadosFiltrados = response.filter((registro) => {
+              const titulo = registro.titulo.toLowerCase();
+              const outrasInformacoes = Object.values(registro).filter((valor) => valor).join(' ').toLowerCase();
+
+              return titulo.includes(textoFiltrado) || outrasInformacoes.includes(textoFiltrado);
+            });
+            return this.dadosFiltrados;
+          });
+    }
   }
 }
 </script>
 
 <style scoped>
+.valores {
+  margin-top: 10px;
+  font-size: 11px;
+  color: #6a6a6a;
+  display: flex;
+  justify-content: space-between;
+}
+
 .selecionar-meses.selecionar-meses-scroll {
   width: 70%;
   display: flex;

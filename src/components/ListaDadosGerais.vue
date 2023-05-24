@@ -1,9 +1,9 @@
 <template>
   <div class="container-header">
-    <header-dashboard :titulo_centro="titulo_central" :listaDados="listaDados"/>
+    <header-dashboard :titulo_centro="titulo_central" :listaDados="listaDados" @texto-atualizado="atualizarTexto" />
   </div>
   <div class="container-main">
-    <card-lista/>
+    <card-lista :texto="texto"/>
   </div>
 </template>
 
@@ -20,6 +20,12 @@ export default {
       titulo_cartao: "CARTÕES DE CRÉDITOS",
       titulo_boleto: "BOLETOS BANCÁRIOS",
       listaDados: "listaDados",
+      texto: ""
+    }
+  },
+  methods: {
+    atualizarTexto(novoTexto) {
+      this.texto = novoTexto;
     }
   }
 };
