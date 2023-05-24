@@ -62,13 +62,18 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\Cliente::class,
         ],
 
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+    ],
+
+    'api' => [
+        'driver' => 'passport',
+        'provider' => 'users',
     ],
 
     /*
@@ -96,6 +101,7 @@ return [
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
+            'column' => 'password',
         ],
     ],
 

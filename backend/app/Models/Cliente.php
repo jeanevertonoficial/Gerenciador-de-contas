@@ -3,19 +3,52 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cliente extends Model
+class Cliente extends Model implements Authenticatable
 {
     use HasFactory;
 
     protected $fillable = [
-        'email'
+        'email',
+        'password'
     ];
 
     public function usuarios()
     {
         return $this->hasMany(Usuario::class, 'cliente_id');
+    }
+
+    public function getAuthIdentifierName()
+    {
+        // TODO: Implement getAuthIdentifierName() method.
+    }
+
+    public function getAuthIdentifier()
+    {
+        // TODO: Implement getAuthIdentifier() method.
+    }
+
+    public function getAuthPassword()
+    {
+        // TODO: Implement getAuthPassword() method.
+        return $this->password;
+    }
+
+    public function getRememberToken()
+    {
+        // TODO: Implement getRememberToken() method.
+    }
+
+    public function setRememberToken($value)
+    {
+        // TODO: Implement setRememberToken() method.
+    }
+
+    public function getRememberTokenName()
+    {
+        // TODO: Implement getRememberTokenName() method.
     }
 }

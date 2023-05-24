@@ -57,14 +57,16 @@
 
 <script>
 import {
-  createUserWithEmailAndPassword,
+  // createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   // signInWithPopup,
   // FacebookAuthProvider
 } from "firebase/auth";
-import {auth} from "@/main";
+// import {auth} from "@/main";
 import router from "@/router";
 import notificacoesAlert from "@/components/shared/notificacoes-alert";
+import axios from "axios";
+import rotaApi from "@/controllers/rota-api";
 
 export default {
   name: "LoginAutomatico",
@@ -76,28 +78,34 @@ export default {
       email: "",
       password: "",
       connection: null,
+      rota: new rotaApi().rota_criaUsers,
     };
   },
   methods: {
     createLogin() {
-      createUserWithEmailAndPassword(auth, this.email, this.password)
+      const dadosUsuario = {
+        email: this.email,
+        password: this.password
+      };
+
+      axios.post(`${this.rota}/criar-usuario`, dadosUsuario)
           .then((response) => {
-            console.log("Novo Usuário Criado: " + response.user.email);
             this.mensagem(
                 'sucesso',
-                'LoginLogin realiza com sucesso.',
+                `${response.data.message}`,
                 null,
-                false)
+                false
+            );
             router.push({name: "dashboard"});
           })
           .catch((error) => {
             this.mensagem(
                 'erro',
-                'E-email ou senha incorreto.',
+                `${error.response.data.message}`,
                 null,
-                false)
-            console.error(error);
-          });
+                false
+            );
+          })
     },
     abrirLogin() {
       const log = document.querySelectorAll(".logar");
@@ -124,25 +132,29 @@ export default {
       });
     },
     loginWithEmail() {
-      signInWithEmailAndPassword(auth, this.email, this.password)
+      const dadosUsuario = {
+        email: this.email,
+        password: this.password
+      };
+
+      axios.post(`${this.rota}/login-usuario`, dadosUsuario)
           .then((response) => {
             this.mensagem(
                 'sucesso',
-                'Login realiza com sucesso.',
+                `${response.data.message}`,
                 null,
-                false)
+                false
+            );
             router.push({name: "dashboard"});
           })
           .catch((error) => {
-            console.error(error.message);
             this.mensagem(
                 'erro',
-                'Falha ao tentar Logar verifique o email e senha.',
+                `${error.response.data.message}`,
                 null,
-                false)
-
-            this.destroyMyComponent()
-          });
+                false
+            );
+          })
     },
     mensagem(estilo, texto_msg, tempo_msg) {
       this.estilo = estilo;

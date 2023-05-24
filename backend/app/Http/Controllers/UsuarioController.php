@@ -6,6 +6,7 @@ use App\Models\Cliente;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -27,10 +28,43 @@ class UsuarioController extends Controller
         return response()->json($dados, 201);
     }
 
+    public function loginUser(Request $request): JsonResponse
+    {
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            // Autenticação bem-sucedida
+            return response()->json(['message' => 'Login realizado com sucesso'], 200);
+        } else {
+            // Autenticação falhou
+            return response()->json(['message' => 'E-mail ou senha incorretos'], 401);
+        }
+    }
+
+    public function salvarUser(Request $request): JsonResponse
+    {
+        $request->validate([
+            'email' => 'required|email|unique',
+            'password' => 'required'
+        ]);
+        try {
+            // salvar email na tabela clientes
+            $cliente = new Cliente();
+            $cliente->email = $request->email;
+            $cliente->password = Hash::make($request->password);
+            $cliente->save();
+
+            return response()->json(['message' => 'Usuário criado com sucesso'], 201);
+
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['message' => 'Erro ao tentar cadastrar'], 400);
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'email' => 'required|email',
@@ -44,7 +78,7 @@ class UsuarioController extends Controller
             // salvar email na tabela clientes
             $cliente = new Cliente();
             $cliente->email = $request->email;
-            $cliente->senha = Hash::make($request->senha);
+            $cliente->password = Hash::make($request->password);
             $cliente->save();
 
             // salvar dados na tabela usuarios
@@ -65,28 +99,16 @@ class UsuarioController extends Controller
 
     }
 
-    public function criarCliente(Request $request): JsonResponse
-    {
-        $cliente = new Cliente();
-
-        $cliente->email = $request->email;
-        $cliente->senha = Hash::make($request->senha);
-
-        $cliente->save();
-
-        return response()->json($cliente);
-    }
-
-    public function verificarSenha(Request $request): JsonResponse
-    {
-        $cliente = Cliente::where('email', $request->email)->first();
-
-        if (!$cliente || !Hash::check($request->senha, $cliente->senha)) {
-            return response()->json(['message' => 'Email ou senha inválidos.'], 401);
-        }
-
-        return response()->json($cliente);
-    }
+//    public function verificarSenha(Request $request, string $email, $senha): JsonResponse
+//    {
+//        $cliente = Cliente::where('email', $request->email)->first();
+//
+//        if (!$cliente || !Hash::check($request->senha, $cliente->senha)) {
+//            return response()->json(['message' => 'Email ou senha inválidos.'], 401);
+//        }
+//
+//        return response()->json($cliente);
+//    }
 
     /**
      * Display the specified resource.
@@ -107,7 +129,7 @@ class UsuarioController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         $usuario = Usuario::find($id);
         if ($usuario) {
