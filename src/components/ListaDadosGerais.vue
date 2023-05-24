@@ -1,9 +1,9 @@
 <template>
   <div class="container-header">
-    <header-dashboard :titulo_centro="titulo_central" :listaDados="listaDados" @texto-atualizado="atualizarTexto" />
+    <header-dashboard :titulo_centro="titulo_central" :listaDados="listaDados" @texto-atualizado="atualizarTexto" @palavra-chave="salvarPalavraChave"/>
   </div>
   <div class="container-main">
-    <card-lista :texto="texto"/>
+    <card-lista :texto="texto" :historico-busca="historicoBusca"/>
   </div>
 </template>
 
@@ -20,13 +20,17 @@ export default {
       titulo_cartao: "CARTÕES DE CRÉDITOS",
       titulo_boleto: "BOLETOS BANCÁRIOS",
       listaDados: "listaDados",
-      texto: ""
+      texto: "",
+      historicoBusca: "",
     }
   },
   methods: {
     atualizarTexto(novoTexto) {
       this.texto = novoTexto;
-    }
+    },
+    salvarPalavraChave(novoTexto) {
+      this.historicoBusca = novoTexto;
+    },
   }
 };
 </script>

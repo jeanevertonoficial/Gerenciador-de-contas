@@ -11,7 +11,8 @@
     <div class="header-logar">
       <div class="busca-input" v-if="listaDados">
         <div class="busca-div">
-          <input class="busca-input" id="busca_input" type="text" name="busca-texto" v-model="texto" @input="atualizarTexto" placeholder="Buscar">
+          <input class="busca-input" id="busca_input" type="text" name="busca-texto" v-model.trim="texto"
+                 @input="atualizarTexto" @blur="salvarPalavraChave" placeholder="Buscar">
           <img class="busca-lupa" src="/images/icones/lupa.png">
         </div>
       </div>
@@ -54,11 +55,11 @@ import {auth} from "@/main";
 
 export default {
   name: "headerDashboard",
-  props: ["titulo_centro", "listaDados"],
+  props: ["titulo_centro", "listaDados", "titulo"],
   data() {
     return {
       userEmail: null,
-      texto: ""
+      texto: "",
     }
   },
   created() {
@@ -75,6 +76,9 @@ export default {
   methods: {
     atualizarTexto() {
       this.$emit("texto-atualizado", this.texto);
+    },
+    salvarPalavraChave() {
+      this.$emit("palavra-chave", this.texto);
     },
     usuario() {
       auth.onAuthStateChanged((user) => {
@@ -99,24 +103,5 @@ export default {
 <style scoped>
 .none {
   display: none;
-}
-
-input.busca-input {
-  height: 36px;
-  width: 256px;
-  border-radius: 25px;
-  border: none;
-  padding-left: 20px;
-}
-
-img.busca-lupa {
-  position: relative;
-  left: -3.5rem;
-  top: 7px;
-}
-
-.busca-input {
-  position: relative;
-  right: 15px;
 }
 </style>

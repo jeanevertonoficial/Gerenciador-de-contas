@@ -99,17 +99,6 @@ class UsuarioController extends Controller
 
     }
 
-//    public function verificarSenha(Request $request, string $email, $senha): JsonResponse
-//    {
-//        $cliente = Cliente::where('email', $request->email)->first();
-//
-//        if (!$cliente || !Hash::check($request->senha, $cliente->senha)) {
-//            return response()->json(['message' => 'Email ou senha inválidos.'], 401);
-//        }
-//
-//        return response()->json($cliente);
-//    }
-
     /**
      * Display the specified resource.
      */

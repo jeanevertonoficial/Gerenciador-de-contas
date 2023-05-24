@@ -38,11 +38,11 @@
     .container-main {
         width: 100% !important;
         margin: 10px !important;
-        top: 11rem;
+        top: 9rem;
     }
     .base-titulo {
         top: -125px !important;
-        left: 40px;
+        left: 60px;
     }
     .base-img img {
         width: 84px !important;
@@ -98,5 +98,36 @@
         flex-direction: column;
         align-items: center !important;
         justify-content: space-between !important;
+    }
+
+    input.busca-input {
+        width: 150px;
+    }
+
+    input#busca_input:focus {
+        background: #4904c5;
+        width: 160px;
+        border: inherit !important;
+        border-radius: inherit !important;
+        box-shadow: none;
+        box-shadow: -8px 4px 15px #00000045;
+        outline: 0;
+        transition: all 0.3s ease;
+        height: 65px;
+        color: white;
+    }
+
+    img.img-registro {
+        width: 240px !important;
+    }
+
+    .nao-ha-registro {
+        margin-top: 50px;
+    }
+    h1.h1-registro{
+        font-size: 20px;
+    }
+    h2.h2-registro{
+        font-size: 18px;
     }
 }

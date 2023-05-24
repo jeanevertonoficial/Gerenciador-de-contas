@@ -1,5 +1,7 @@
 <template>
+  <!--  <leitor-o-c-r/>-->
   <div class="selecionar-meses">
+    {{ filtroPalavras }}
     {{ textoFiltrado }}
     <div class="meses">
       <label class="label-busca" for="meses">MÊS</label>
@@ -25,7 +27,7 @@
             </option>
           </select>
           <p>INTERVALO</p>
-          <select name="periodo-fim" id="periodo-fim">
+          <select name="periodo-fim" id="periodo-fim" @change="buscarDados()">
             <option v-for="periodo_id in periodo_fim"
                     :key="periodo_id.valor"
                     :selected="periodo_id.selected"
@@ -64,7 +66,14 @@
     </div>
   </div>
 
-  <div class="base-card-lista" v-for="(dados, index) in dadosFiltrados.sort(compararPorId)" :key="index">
+  <div class="tag_destaques">
+    <div class="palavras" v-for="(dados, index) in this.filtroPalavras" :key="index">
+      <span class="btn-click" title="click aqui para excluir palavra chave" @click="deletarItem(index)">x</span>
+      <p class="palavra" title="click aqui para busca avançada" @click="buscarDadosPalavra(dados.nm)">{{ dados.nm }}</p>
+    </div>
+  </div>
+  <div class="base-card-lista" v-if="dadosFiltrados.length !== 0"
+       v-for="(dados, index) in dadosFiltrados.sort(compararPorId)" :key="index">
     <div class="overlay">
       <div class="overlay-info">
         <label>EXLUIR</label>
@@ -101,18 +110,24 @@
       </div>
     </div>
   </div>
+  <div class="nao-ha-registro" v-else>
+    <img class="img-registro" src="/images/cartao-vertor-1.png">
+    <h1 class="h1-registro">NENHUM REGISTRO ENCONTRADO</h1>
+    <h2 class="h2-registro">Neste período :)</h2>
+  </div>
 </template>
 
 <script>
 import axios from "axios";
 import rotaApi from "@/controllers/rota-api";
+// import leitorOCR from "@/components/shared/leitorOCR.vue";
 
 export default {
   name: "card-lista",
-  props: ["texto"],
+  props: ["texto", "historicoBusca"],
+  // components: { leitorOCR },
   data() {
     return {
-      textoFiltrado: '',
       listaDados: true,
       dadosSalvos: [],
       valorTotal: 0,
@@ -213,10 +228,16 @@ export default {
       stepValue: 1,
       selectedValue: 50,
       items: [], // Valores vindos da API,
-      mostrarDivAposFiltro: false
+      mostrarDivAposFiltro: false,
+      filtroPalavras: [],
+      dadosAPIFetched: false,
+      dadosSugestao: ""
     }
   },
   methods: {
+    deletarItem(index) {
+      this.filtroPalavras.splice(index, 1); // Remove o item pelo índice
+    },
     formatCurrency(value) {
       return value.toLocaleString("pt-BR", {style: "currency", currency: "BRL"});
     },
@@ -237,31 +258,37 @@ export default {
       return chaveImagem ? this.imagens[chaveImagem] : this.imagensTipo;
     },
     buscarDadosAPI() {
-      return axios.get(`${this.rota}/dados/jeanever39@gmail.com`)
-          .then((querySnapshot) => {
-            const dadosSalvos = querySnapshot.data.map((item) => {
-              const dataCriacao = new Date(item.created_at);
-              const anoMes = dataCriacao.toLocaleDateString("pt-BR", {year: "numeric", month: "2-digit"});
-              return {...item, created_at: anoMes};
+      if (this.dadosAPIFetched) {
+        return Promise.resolve(this.dadosSalvos);
+      } else {
+        return axios
+            .get(`${this.rota}/dados/jeanever39@gmail.com`)
+            .then((querySnapshot) => {
+              this.dadosSalvos = querySnapshot.data.map((item) => {
+                const dataCriacao = new Date(item.created_at);
+                const anoMes = dataCriacao.toLocaleDateString("pt-BR", {year: "numeric"});
+                this.dadosSugestao = item
+                this.$emit('dados-gerais', this.dadosSugestao)
+
+                return (
+                    {...item, created_at: item.mes_referente + "/" + anoMes}
+                );
+              });
+
+              this.dadosAPIFetched = true;
+              return this.dadosSalvos;
+            })
+            .catch((error) => {
+              console.log("Erro ao consultar documentos: ", error);
+              return [];
             });
-
-            return dadosSalvos;
-          })
-          .catch((error) => {
-            console.log("Erro ao consultar documentos: ", error);
-            return [];
-          });
+      }
     },
-
     getDados(mes, inicio, fim, ano) {
       this.buscarDadosAPI()
           .then((querySnapshot) => {
-            this.dadosSalvos = querySnapshot;
-
-            const valoresGerais = this.dadosSalvos.map(({valor}) => parseFloat(valor));
-            this.minValue = Math.min(...valoresGerais);
-            this.maxValue = Math.max(...valoresGerais);
-            this.dadosFiltrados = this.dadosSalvos;
+            const valoresGerais = querySnapshot.map(({valor}) => parseFloat(valor));
+            this.valorMinMaxReferente(valoresGerais)
 
             if (mes != null && mes !== "" &&
                 inicio != null && inicio !== "" &&
@@ -286,16 +313,20 @@ export default {
               this.dadosFiltrados = querySnapshot
             }
 
-            const valoresFiltrados = this.dadosFiltrados.map(({valor}) => parseFloat(valor));
-            this.minValue = Math.min(this.minValue, ...valoresFiltrados);
-            this.maxValue = Math.max(this.maxValue, ...valoresFiltrados);
-
-            this.valorTotal = valoresFiltrados.reduce((total, valor) => total + valor, 0);
+            this.valorTotalReferente(this.dadosFiltrados)
 
           })
           .catch((error) => {
             console.log("Erro ao consultar documentos: ", error);
           });
+    },
+    valorTotalReferente(dados) {
+      const valoresFiltrados = dados.map(({valor}) => parseFloat(valor));
+      this.valorTotal = valoresFiltrados.reduce((total, valor) => total + valor, 0);
+    },
+    valorMinMaxReferente(valorReferente) {
+      this.minValue = Math.min(...valorReferente);
+      this.maxValue = Math.max(...valorReferente);
     },
     compararPorId(a, b) {
       if (a.id < b.id) {
@@ -307,10 +338,10 @@ export default {
       }
     },
     buscarDados() {
-      const mes = document.getElementById('meses').value; // pega o valor selecionado no dropdown de meses
-      const inicio = document.getElementById('periodo-inicio').value; // pega o valor selecionado no dropdown de início do período
-      const fim = document.getElementById('periodo-fim').value; // pega o valor selecionado no dropdown de fim do período
-      const ano = document.getElementById('ano').value; // pega o valor selecionado no dropdown de ano
+      const mes = document.getElementById('meses').value;
+      const inicio = document.getElementById('periodo-inicio').value;
+      const fim = document.getElementById('periodo-fim').value;
+      const ano = document.getElementById('ano').value;
 
       this.mostrarDivAposFiltro = true;
       this.getDados(mes, inicio, fim, ano);
@@ -330,6 +361,25 @@ export default {
       }
 
     },
+    buscarDadosPalavra(e) {
+      this.baseFiltroAvancado(e)
+    },
+    baseFiltroAvancado(nome) {
+      const textoFiltrado = nome;
+      this.buscarDadosAPI()
+          .then((response) => {
+            this.dadosFiltrados = response.filter((registro) => {
+              const titulo = registro.titulo.toLowerCase();
+              const outrasInformacoes = Object.values(registro).filter((valor) => valor).join(' ').toLowerCase();
+
+              return titulo.includes(textoFiltrado) || outrasInformacoes.includes(textoFiltrado);
+            });
+            this.valorTotalReferente(this.dadosFiltrados)
+            this.valorMinMaxReferente(this.dadosFiltrados)
+
+            return this.dadosFiltrados;
+          });
+    },
     beforeDestroy() {
       window.removeEventListener('scroll', this.handleScroll);
     }
@@ -340,23 +390,77 @@ export default {
   },
   computed: {
     textoFiltrado() {
-      const textoFiltrado = this.texto.toLowerCase().trim();
-      this.buscarDadosAPI()
-          .then((response) => {
-            this.dadosFiltrados = response.filter((registro) => {
-              const titulo = registro.titulo.toLowerCase();
-              const outrasInformacoes = Object.values(registro).filter((valor) => valor).join(' ').toLowerCase();
-
-              return titulo.includes(textoFiltrado) || outrasInformacoes.includes(textoFiltrado);
-            });
-            return this.dadosFiltrados;
-          });
+      if (this.texto !== "") {
+        const textoFiltrado = this.texto.toLowerCase().trim();
+        this.baseFiltroAvancado(textoFiltrado)
+      }
+    },
+    filtroPalavras() {
+      if (this.historicoBusca !== "") {
+        const palavraExistente = this.filtroPalavras.some(item => item.nm === this.historicoBusca);
+        if (!palavraExistente) {
+          this.filtroPalavras.push({"nm": this.historicoBusca});
+        }
+      }
     }
   }
 }
 </script>
 
 <style scoped>
+
+select:focus {
+  outline: none;
+}
+
+img.img-registro {
+  width: 500px;
+}
+
+h1.h1-registro {
+  color: var(--COLOR-VALOR-TOTAL);
+}
+
+h2.h2-registro {
+  color: var(--COLOR-BASE-PRIMARIA);
+}
+
+.nao-ha-registro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-click {
+  cursor: pointer;
+  padding-right: 5px;
+}
+
+.tag_destaques {
+  margin-top: 113px;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: -75px;
+}
+
+.palavras {
+  border-radius: 21px;
+  height: 25px;
+  padding: 0 15px;
+  box-shadow: -10px 10px 19px rgba(0, 0, 0, 0.1);
+  background: var(--COLOR-BASE-PRIMARIA);
+  margin: 10px;
+  display: flex;
+  color: white;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.palavra {
+  cursor: pointer;
+}
+
 .valores {
   margin-top: 10px;
   font-size: 11px;

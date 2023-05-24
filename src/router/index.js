@@ -16,9 +16,7 @@ const routes = [
     path: "/",
     name: "dashboard",
     component: () => import("../components/DashboardGerencial.vue"),
-    meta: {
-      requiresAuth: true,
-    },
+
   },
 ];
 
